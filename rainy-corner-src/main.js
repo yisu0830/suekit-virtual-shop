@@ -199,8 +199,8 @@ for(let i=0;i<52;i++){
   const r=new THREE.Mesh(rippleGeo,m);r.rotation.x=-Math.PI/2;r.position.set(rng()*11.3-5.65,.293,2.55+rng()*3.07);r.userData={phase:rng(),speed:.38+rng()*.36,radius:.17+rng()*.21};rippleGroup.add(r);ripples.push(r);
 }
 // Rain is clipped to the miniature rather than falling into an infinite world.
-const rainN=1050, rainData=[], rainPositions=new Float32Array(rainN*6);
-for(let i=0;i<rainN;i++)rainData.push({x:rng()*11.7-5.85,z:rng()*11.7-5.85,y:rng()*7.7,speed:5+rng()*3,len:.15+rng()*.20});
+const rainN=750, rainData=[], rainPositions=new Float32Array(rainN*6);
+for(let i=0;i<rainN;i++)rainData.push({x:rng()*11.7-5.85,z:rng()*11.7-5.85,y:rng()*7.7,speed:4+rng()*2,len:.14+rng()*.14});
 const rainGeometry=new THREE.BufferGeometry();rainGeometry.setAttribute('position',new THREE.BufferAttribute(rainPositions,3));
 const rain=new THREE.LineSegments(rainGeometry,new THREE.LineBasicMaterial({color:'#a8cada',transparent:true,opacity:.22,depthWrite:false}));rain.frustumCulled=false;scene.add(rain);
 const drips=[];
@@ -259,20 +259,20 @@ function applyState(){
   baseRim.material.color.set(night?'#44516a':'#bbb9ad');
   baseTop.material.color.set(night?'#344357':'#91958f');
   asphalt.color.set(night?'#263344':'#687273');
-  asphalt.roughness=.82;asphalt.metalness=.02;asphalt.clearcoat=0;
+  asphalt.roughness=summer?.48:.82;asphalt.metalness=summer?.08:.02;asphalt.clearcoat=summer?.35:0;
   for(const l of artificialLights)l.intensity=night?l.userData.nightIntensity:0;
   for(const m of emissiveMaterials)m.emissiveIntensity=night?m.userData.nightEmission:0;
   for(const s of lightHalos)s.visible=night;
   for(const m of hardware.glassStreakMaterials||[])m.visible=false;
   for(const p of hardware.unlitPanels||[])p.material.color.set(night?'#ffead4':'#ffffff');
   seasons.setSeason(state.season);
-  wet.visible=false;puddleGroup.visible=false;rippleGroup.visible=false;rain.visible=false;
-  rain.material.color.set(night?'#9dc3d4':'#496d83');rain.material.opacity=night?.23:.43;
-  for(const d of drips)d.visible=false;
+  wet.visible=summer;puddleGroup.visible=summer;rippleGroup.visible=summer;rain.visible=summer;
+  rain.material.color.set(night?'#b7dce8':'#355e78');rain.material.opacity=night?.36:.52;
+  for(const d of drips)d.visible=summer;
   shadow.material.opacity=night?.6:.30;
   renderer.shadowMap.needsUpdate=true;
   recordState();
-  document.documentElement.dataset.weather=summer?'clear':state.season==='winter'?'snow':state.season==='spring'?'petals':'leaves';
+  document.documentElement.dataset.weather=summer?'rain':state.season==='winter'?'snow':state.season==='spring'?'petals':'leaves';
   try{localStorage.setItem('suekit-miniature-state',JSON.stringify(state));}catch{}
 }
 for(const b of modeButtons)b.addEventListener('click',()=>{state.mode=b.dataset.modeChoice;applyState();});
@@ -291,6 +291,23 @@ function animate(now){
   if((customersMoving||opening>0)&&frameCounter%10===0)renderer.shadowMap.needsUpdate=true;
   if(hardware.signBox?.material.emissive)hardware.signBox.material.emissiveIntensity=night?hardware.signBox.material.userData.nightEmission*(.97+.03*Math.sin(t*3.7)):0;
   for(const s of hardware.glassStreakMaterials||[])if(s.uniforms.time)s.uniforms.time.value=t;
+  if(state.season==='summer'){
+    wet.material.uniforms.wetTime.value=t;
+    for(const r of ripples){const a=(t*r.userData.speed+r.userData.phase)%1;r.scale.setScalar(.02+a*r.userData.radius);r.material.opacity=(1-a)*.13;}
+    for(let i=0;i<rainN;i++){
+      const d=rainData[i];d.y-=dt*d.speed;if(d.y<.22)d.y=7.7;
+      const roof=d.x>-3.92&&d.x<1.75&&d.z>-3.73&&d.z<.91&&d.y<5.7;
+      const a=hardware.awning;
+      const awningY=a.yBack+(a.yFront-a.yBack)*(d.z-a.zBack)/(a.zFront-a.zBack);
+      const underAwning=Math.abs(d.x-a.x)<a.width/2&&d.z>=a.zBack&&d.z<=a.zFront&&d.y<awningY;
+      const sheltered=roof||underAwning;
+      const j=i*6,y=roof?5.71:underAwning?awningY+.005:d.y;
+      rainPositions[j]=d.x;rainPositions[j+1]=y;rainPositions[j+2]=d.z;
+      rainPositions[j+3]=sheltered?d.x:d.x-.024;rainPositions[j+4]=sheltered?y:y+d.len;rainPositions[j+5]=sheltered?d.z:d.z-.012;
+    }
+    rainGeometry.attributes.position.needsUpdate=true;
+    for(const d of drips){const a=(t*d.userData.speed+d.userData.phase)%1;d.position.y=d.userData.top-a*a*(d.userData.top-d.userData.bottom);d.scale.y=1.8+a*2;d.material.opacity=.25*(1-a*.4);}
+  }
   if(street.signalMaterials?.length){const active=Math.floor(t/7)%3;street.signalMaterials.forEach((m,i)=>{m.emissiveIntensity=night?(i===active?1.2:.04):0;});}
   renderer.render(scene,camera);
   frameCounter++;
