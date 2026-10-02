@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "esbuild": "^0.25.10",
+    "three": "^0.180.0"
+  }
+}
