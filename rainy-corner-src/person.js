@@ -149,11 +149,22 @@ export function createPerson(THREE, index = 0) {
   // Keep the canopy above the head while the right hand holds its shaft.
   const umbrella = new THREE.Group(); umbrella.name = 'rain-umbrella';
   umbrella.position.set(.14, 0, .055); umbrella.visible = false; group.add(umbrella);
-  const canopyColor = ['#c96859', '#7295a2', '#d6a455', '#728568', '#a0788e'][outfitIndex];
-  const canopy = new THREE.Mesh(new THREE.ConeGeometry(.43, .27, 12, 1, false), shared.material(canopyColor, true));
-  canopy.position.y = 1.72; canopy.castShadow = true; umbrella.add(canopy);
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(.43, .012, 5, 12), shared.material('#5b6060'));
+  const clearVinyl = new THREE.MeshPhysicalMaterial({
+    color: '#dceef2', transparent: true, opacity: .34, roughness: .12,
+    metalness: 0, side: THREE.DoubleSide, depthWrite: false,
+  });
+  const canopy = new THREE.Mesh(new THREE.ConeGeometry(.43, .27, 12, 1, false), clearVinyl);
+  canopy.position.y = 1.72; umbrella.add(canopy);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(.43, .009, 5, 12), shared.material('#aabcc1'));
   rim.rotation.x = Math.PI / 2; rim.position.y = 1.585; umbrella.add(rim);
+  for (let spoke = 0; spoke < 6; spoke++) {
+    const angle = spoke * Math.PI / 3;
+    const rib = new THREE.Mesh(new THREE.CylinderGeometry(.005, .005, .455, 5), shared.material('#aabcc1'));
+    rib.position.set(Math.sin(angle) * .215, 1.72, Math.cos(angle) * .215);
+    rib.rotation.z = -Math.sin(angle) * .86;
+    rib.rotation.x = Math.cos(angle) * .86;
+    umbrella.add(rib);
+  }
   const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.011, .011, .68, 8), shared.material('#5b6060'));
   shaft.position.y = 1.25; umbrella.add(shaft);
   oval(skin, umbrella, [0, 1.02, .012], [.035, .043, .035]);

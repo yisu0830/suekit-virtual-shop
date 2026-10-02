@@ -194,7 +194,7 @@ export function buildVisitors(ctx, traffic = customerTraffic) {
       if (walking === 0) person.velocity = THREE.MathUtils.damp(person.velocity, 0, 7, dt);
       person.stride = THREE.MathUtils.damp(person.stride, walking, 7, dt);
       person.animate(person.stepTime, person.stride);
-      person.umbrella.visible = raining && position.z > .95;
+      person.umbrella.visible = raining;
       person.group.userData.activity = person.state;
     }
     return moving;
@@ -203,7 +203,7 @@ export function buildVisitors(ctx, traffic = customerTraffic) {
   let raining = false;
   function setRaining(value) {
     raining = Boolean(value);
-    for (const person of people) person.umbrella.visible = raining && person.group.position.z > .95;
+    for (const person of people) person.umbrella.visible = raining;
   }
 
   return { group, people, count, traffic, update, setRaining, get opening() { return opening; } };
