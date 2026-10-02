@@ -146,6 +146,18 @@ export function createPerson(THREE, index = 0) {
     arms.push({shoulder, elbow, side});
   }
 
+  // Keep the canopy above the head while the right hand holds its shaft.
+  const umbrella = new THREE.Group(); umbrella.name = 'rain-umbrella';
+  umbrella.position.set(.14, 0, .055); umbrella.visible = false; group.add(umbrella);
+  const canopyColor = ['#c96859', '#7295a2', '#d6a455', '#728568', '#a0788e'][outfitIndex];
+  const canopy = new THREE.Mesh(new THREE.ConeGeometry(.43, .27, 12, 1, false), shared.material(canopyColor, true));
+  canopy.position.y = 1.72; canopy.castShadow = true; umbrella.add(canopy);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(.43, .012, 5, 12), shared.material('#5b6060'));
+  rim.rotation.x = Math.PI / 2; rim.position.y = 1.585; umbrella.add(rim);
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.011, .011, .68, 8), shared.material('#5b6060'));
+  shaft.position.y = 1.25; umbrella.add(shaft);
+  oval(skin, umbrella, [0, 1.02, .012], [.035, .043, .035]);
+
   const phaseOffset = index * 2.399963;
   const cycle = 1.4;
   const stanceDuration = .62;
@@ -209,10 +221,15 @@ export function createPerson(THREE, index = 0) {
       const swing = Math.cos(phase + (arm.side === 1 ? Math.PI : 0));
       arm.shoulder.rotation.x = -.065 + swing * .17 * amount;
       arm.elbow.rotation.x = -.16 - Math.max(0, -swing) * .045 * amount;
+      if (umbrella.visible && arm.side === 1) {
+        arm.shoulder.rotation.x = -.72;
+        arm.shoulder.rotation.z = -.43;
+        arm.elbow.rotation.x = -.58;
+      } else arm.shoulder.rotation.z = arm.side * .072;
     }
     head.rotation.y = -body.rotation.y * .7 + Math.sin(phase * .21) * .014 * amount;
     head.rotation.z = -body.rotation.z * .85;
   };
   animate(0, 0);
-  return {group, animate, height: 1.5};
+  return {group, umbrella, animate, height: 1.5};
 }

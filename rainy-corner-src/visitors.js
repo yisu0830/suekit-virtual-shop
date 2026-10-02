@@ -194,10 +194,17 @@ export function buildVisitors(ctx, traffic = customerTraffic) {
       if (walking === 0) person.velocity = THREE.MathUtils.damp(person.velocity, 0, 7, dt);
       person.stride = THREE.MathUtils.damp(person.stride, walking, 7, dt);
       person.animate(person.stepTime, person.stride);
+      person.umbrella.visible = raining && position.z > .95;
       person.group.userData.activity = person.state;
     }
     return moving;
   }
 
-  return { group, people, count, traffic, update, get opening() { return opening; } };
+  let raining = false;
+  function setRaining(value) {
+    raining = Boolean(value);
+    for (const person of people) person.umbrella.visible = raining && person.group.position.z > .95;
+  }
+
+  return { group, people, count, traffic, update, setRaining, get opening() { return opening; } };
 }

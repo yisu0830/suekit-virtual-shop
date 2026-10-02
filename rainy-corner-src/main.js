@@ -199,8 +199,8 @@ for(let i=0;i<52;i++){
   const r=new THREE.Mesh(rippleGeo,m);r.rotation.x=-Math.PI/2;r.position.set(rng()*11.3-5.65,.293,2.55+rng()*3.07);r.userData={phase:rng(),speed:.38+rng()*.36,radius:.17+rng()*.21};rippleGroup.add(r);ripples.push(r);
 }
 // Rain is clipped to the miniature rather than falling into an infinite world.
-const rainN=1200, rainData=[], rainPositions=new Float32Array(rainN*6);
-for(let i=0;i<rainN;i++)rainData.push({x:rng()*11.7-5.85,z:rng()*11.7-5.85,y:rng()*7.7,speed:5+rng()*3,len:.085+rng()*.17});
+const rainN=2100, rainData=[], rainPositions=new Float32Array(rainN*6);
+for(let i=0;i<rainN;i++)rainData.push({x:rng()*11.7-5.85,z:rng()*11.7-5.85,y:rng()*7.7,speed:5+rng()*3,len:.15+rng()*.20});
 const rainGeometry=new THREE.BufferGeometry();rainGeometry.setAttribute('position',new THREE.BufferAttribute(rainPositions,3));
 const rain=new THREE.LineSegments(rainGeometry,new THREE.LineBasicMaterial({color:'#a8cada',transparent:true,opacity:.22,depthWrite:false}));rain.frustumCulled=false;scene.add(rain);
 const drips=[];
@@ -266,8 +266,9 @@ function applyState(){
   for(const m of hardware.glassStreakMaterials||[])m.visible=summer;
   for(const p of hardware.unlitPanels||[])p.material.color.set(night?'#ffead4':'#ffffff');
   seasons.setSeason(state.season);
+  visitors.setRaining(summer);
   wet.visible=summer;puddleGroup.visible=summer;rippleGroup.visible=summer;rain.visible=summer;
-  rain.material.color.set(night?'#9dc3d4':'#7d9d9e');rain.material.opacity=night?.20:.14;
+  rain.material.color.set(night?'#9dc3d4':'#496d83');rain.material.opacity=night?.23:.43;
   for(const d of drips)d.visible=summer;
   shadow.material.opacity=night?.6:.30;
   renderer.shadowMap.needsUpdate=true;
