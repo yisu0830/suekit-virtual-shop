@@ -172,11 +172,16 @@ export function buildSeasons(ctx) {
 
   // Summer: slatted resting bench, herbs and a small desk fan.
   const summer=seasonGroups.summer;
-  // Soft cloud groups drift behind the miniature shop, with varied starts and speeds.
+  // Clouds occupy the air above the whole shop, including its front edge.
   const cloudMaterial=new THREE.MeshLambertMaterial({color:'#fffdf2',transparent:true,opacity:.8,depthWrite:false});
   const cloudGeometry=new THREE.SphereGeometry(1,12,8);
   const clouds=[];
-  for(let i=0;i<4;i++) {
+  const cloudDepths=[-2.9,-1.7,-.5,.8,2.0];
+  for(let i=cloudDepths.length-1;i>0;i--) {
+    const j=Math.floor(rng()*(i+1));
+    [cloudDepths[i],cloudDepths[j]]=[cloudDepths[j],cloudDepths[i]];
+  }
+  for(let i=0;i<5;i++) {
     const cloud=new THREE.Group();cloud.name=`summer-cloud-${i+1}`;
     const lobes=3+Math.floor(rng()*3);
     for(let j=0;j<lobes;j++) {
@@ -185,17 +190,18 @@ export function buildSeasons(ctx) {
       puff.scale.set(.43+rng()*.19,.20+rng()*.10,.23+rng()*.08);
       cloud.add(puff);
     }
-    cloud.position.set(-6+i*3.5+rng()*.8,7.15+rng()*1.0,-5.8-rng()*1.2);
+    const depth=cloudDepths[i]+(rng()-.5)*.55;
+    cloud.position.set(-3.8+i*1.55+(rng()-.5)*.8,7.25+(depth+3.2)*.26+rng()*.5,depth);
     cloud.userData.speed=.08+rng()*.09;
     summer.add(cloud);clouds.push(cloud);
   }
   seasonalMotion.summer.push((t,dt)=>{
     for(const cloud of clouds) {
       cloud.position.x+=dt*cloud.userData.speed;
-      if(cloud.position.x>8) {
-        cloud.position.x=-8-rng()*2;
-        cloud.position.y=7.15+rng()*1.0;
-        cloud.position.z=-5.8-rng()*1.2;
+      if(cloud.position.x>4.7) {
+        cloud.position.x=-5.3-rng();
+        cloud.position.z=-3.2+rng()*5.5;
+        cloud.position.y=7.25+(cloud.position.z+3.2)*.26+rng()*.5;
       }
     }
   });
