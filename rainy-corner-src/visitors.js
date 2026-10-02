@@ -194,16 +194,13 @@ export function buildVisitors(ctx, traffic = customerTraffic) {
       if (walking === 0) person.velocity = THREE.MathUtils.damp(person.velocity, 0, 7, dt);
       person.stride = THREE.MathUtils.damp(person.stride, walking, 7, dt);
       person.animate(person.stepTime, person.stride);
-      person.umbrella.visible = raining;
       person.group.userData.activity = person.state;
     }
     return moving;
   }
 
-  let raining = false;
   function setRaining(value) {
-    raining = Boolean(value);
-    for (const person of people) person.umbrella.visible = raining;
+    for (const person of people) person.setRaincoat(Boolean(value));
   }
 
   return { group, people, count, traffic, update, setRaining, get opening() { return opening; } };

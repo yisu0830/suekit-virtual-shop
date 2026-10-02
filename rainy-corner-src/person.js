@@ -124,7 +124,7 @@ export function createPerson(THREE, index = 0) {
   const forearmGeometry = shared.profile('forearm', [
     [0, 0], [.035, -.003], [.036, -.035], [.029, -.145], [.028, -.215], [0, -.217],
   ], 12);
-  const legs = [], arms = [];
+  const legs = [], arms = [], coatSleeves = [];
   for (const side of [-1, 1]) {
     const hip = new THREE.Group(); hip.position.set(side * .080, .790, 0); motion.add(hip);
     make(thighGeometry, outfit.trousers, hip, [0, 0, 0]);
@@ -137,37 +137,31 @@ export function createPerson(THREE, index = 0) {
 
     const shoulder = new THREE.Group(); shoulder.position.set(side * .172 * jacketWidth, .368, .004);
     shoulder.rotation.z = side * .072; body.add(shoulder);
-    make(armGeometry, outfit.jacket, shoulder, [0, 0, 0]);
+    const sleeve = make(armGeometry, outfit.jacket, shoulder, [0, 0, 0]);
     const elbow = new THREE.Group(); elbow.position.y = -.245; shoulder.add(elbow);
-    make(forearmGeometry, outfit.jacket, elbow, [0, 0, 0]);
+    const forearm = make(forearmGeometry, outfit.jacket, elbow, [0, 0, 0]);
     oval(outfit.shirt, elbow, [0, -.211, 0], [.027, .018, .026]);
     const hand = oval(skin, elbow, [0, -.248, .003], [.026, .045, .024]);
     hand.rotation.z = side * -.08;
     arms.push({shoulder, elbow, side});
+    coatSleeves.push(sleeve, forearm);
   }
 
-  // Keep the canopy above the head while the right hand holds its shaft.
-  const umbrella = new THREE.Group(); umbrella.name = 'rain-umbrella';
-  umbrella.position.set(.14, 0, .055); umbrella.visible = false; group.add(umbrella);
-  const clearVinyl = new THREE.MeshPhysicalMaterial({
-    color: '#dceef2', transparent: true, opacity: .34, roughness: .12,
-    metalness: 0, side: THREE.DoubleSide, depthWrite: false,
-  });
-  const canopy = new THREE.Mesh(new THREE.ConeGeometry(.43, .27, 12, 1, false), clearVinyl);
-  canopy.position.y = 1.72; umbrella.add(canopy);
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(.43, .009, 5, 12), shared.material('#aabcc1'));
-  rim.rotation.x = Math.PI / 2; rim.position.y = 1.585; umbrella.add(rim);
-  for (let spoke = 0; spoke < 6; spoke++) {
-    const angle = spoke * Math.PI / 3;
-    const rib = new THREE.Mesh(new THREE.CylinderGeometry(.005, .005, .455, 5), shared.material('#aabcc1'));
-    rib.position.set(Math.sin(angle) * .215, 1.72, Math.cos(angle) * .215);
-    rib.rotation.z = -Math.sin(angle) * .86;
-    rib.rotation.x = Math.cos(angle) * .86;
-    umbrella.add(rib);
-  }
-  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(.011, .011, .68, 8), shared.material('#5b6060'));
-  shaft.position.y = 1.25; umbrella.add(shaft);
-  oval(skin, umbrella, [0, 1.02, .012], [.035, .043, .035]);
+  // A hooded raincoat follows the body and leaves the face visible.
+  const raincoat = new THREE.Group(); raincoat.name = 'raincoat'; raincoat.visible = false; motion.add(raincoat);
+  const coatColor = ['#d5aa4b', '#8da9a5', '#c88366', '#9aa76d', '#a68fa6'][outfitIndex];
+  const coatMaterial = shared.material(coatColor, true);
+  const coat = new THREE.Mesh(new THREE.CylinderGeometry(.17, .265, .66, 12, 1, true), coatMaterial);
+  coat.position.y = 1.01; coat.castShadow = true; raincoat.add(coat);
+  const hood = new THREE.Mesh(new THREE.SphereGeometry(.145, 16, 10, Math.PI, Math.PI, 0, Math.PI * .74), coatMaterial);
+  hood.position.set(0, 1.386, -.015); hood.scale.set(1, 1.15, 1); raincoat.add(hood);
+  const brim = new THREE.Mesh(new THREE.TorusGeometry(.106, .012, 5, 12, 0, Math.PI), coatMaterial);
+  brim.position.set(0, 1.433, .065); brim.rotation.x = -.3; raincoat.add(brim);
+  const jacketMaterial = shared.material(outfit.jacket);
+  const setRaincoat = visible => {
+    raincoat.visible = visible;
+    for (const sleeve of coatSleeves) sleeve.material = visible ? coatMaterial : jacketMaterial;
+  };
 
   const phaseOffset = index * 2.399963;
   const cycle = 1.4;
@@ -232,15 +226,11 @@ export function createPerson(THREE, index = 0) {
       const swing = Math.cos(phase + (arm.side === 1 ? Math.PI : 0));
       arm.shoulder.rotation.x = -.065 + swing * .17 * amount;
       arm.elbow.rotation.x = -.16 - Math.max(0, -swing) * .045 * amount;
-      if (umbrella.visible && arm.side === 1) {
-        arm.shoulder.rotation.x = -.72;
-        arm.shoulder.rotation.z = -.43;
-        arm.elbow.rotation.x = -.58;
-      } else arm.shoulder.rotation.z = arm.side * .072;
+      arm.shoulder.rotation.z = arm.side * .072;
     }
     head.rotation.y = -body.rotation.y * .7 + Math.sin(phase * .21) * .014 * amount;
     head.rotation.z = -body.rotation.z * .85;
   };
   animate(0, 0);
-  return {group, umbrella, animate, height: 1.5};
+  return {group, raincoat, setRaincoat, animate, height: 1.5};
 }
