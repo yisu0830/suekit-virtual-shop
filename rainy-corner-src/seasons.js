@@ -172,17 +172,17 @@ export function buildSeasons(ctx) {
 
   // Summer: slatted resting bench, herbs and a small desk fan.
   const summer=seasonGroups.summer;
-  // Clouds occupy the air above the whole shop, including its front edge.
-  const cloudMaterial=new THREE.MeshLambertMaterial({color:'#fffdf2',transparent:true,opacity:.8,depthWrite:false});
+  // Clouds span the street's full footprint and fade at its left and right edges.
   const cloudGeometry=new THREE.SphereGeometry(1,12,8);
   const clouds=[];
-  const cloudDepths=[-2.9,-1.7,-.5,.8,2.0];
+  const cloudDepths=[-5.0,-3.3,-1.7,0,1.7,3.3,5.0];
   for(let i=cloudDepths.length-1;i>0;i--) {
     const j=Math.floor(rng()*(i+1));
     [cloudDepths[i],cloudDepths[j]]=[cloudDepths[j],cloudDepths[i]];
   }
-  for(let i=0;i<5;i++) {
+  for(let i=0;i<cloudDepths.length;i++) {
     const cloud=new THREE.Group();cloud.name=`summer-cloud-${i+1}`;
+    const cloudMaterial=new THREE.MeshLambertMaterial({color:'#fffdf2',transparent:true,opacity:.8,depthWrite:false});
     const lobes=3+Math.floor(rng()*3);
     for(let j=0;j<lobes;j++) {
       const puff=new THREE.Mesh(cloudGeometry,cloudMaterial);
@@ -190,19 +190,21 @@ export function buildSeasons(ctx) {
       puff.scale.set(.43+rng()*.19,.20+rng()*.10,.23+rng()*.08);
       cloud.add(puff);
     }
-    const depth=cloudDepths[i]+(rng()-.5)*.55;
-    cloud.position.set(-3.8+i*1.55+(rng()-.5)*.8,7.25+(depth+3.2)*.26+rng()*.5,depth);
-    cloud.userData.speed=.08+rng()*.09;
+    const depth=cloudDepths[i]+(rng()-.5)*.5;
+    cloud.position.set(-5.4+i*1.8+(rng()-.5)*.7,7.15+(depth+5)*.20+rng()*.45,depth);
+    cloud.userData.speed=.10+rng()*.11;
+    cloud.userData.material=cloudMaterial;
     summer.add(cloud);clouds.push(cloud);
   }
   seasonalMotion.summer.push((t,dt)=>{
     for(const cloud of clouds) {
       cloud.position.x+=dt*cloud.userData.speed;
-      if(cloud.position.x>4.7) {
-        cloud.position.x=-5.3-rng();
-        cloud.position.z=-3.2+rng()*5.5;
-        cloud.position.y=7.25+(cloud.position.z+3.2)*.26+rng()*.5;
+      if(cloud.position.x>6.7) {
+        cloud.position.x=-6.7-rng()*.5;
+        cloud.position.z=-5.2+rng()*10.4;
+        cloud.position.y=7.15+(cloud.position.z+5)*.20+rng()*.45;
       }
+      cloud.userData.material.opacity=.8*THREE.MathUtils.clamp(Math.min((cloud.position.x+6.7)/1.8,(6.7-cloud.position.x)/1.8),0,1);
     }
   });
   for (const x of [2.27,3.00]) {
