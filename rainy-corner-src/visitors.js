@@ -199,9 +199,5 @@ export function buildVisitors(ctx, traffic = customerTraffic) {
     return moving;
   }
 
-  function setRaining(value) {
-    for (const person of people) person.setRaincoat(Boolean(value));
-  }
-
-  return { group, people, count, traffic, update, setRaining, get opening() { return opening; } };
+  return { group, people, count, traffic, update, get opening() { return opening; } };
 }

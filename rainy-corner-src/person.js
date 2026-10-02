@@ -124,7 +124,7 @@ export function createPerson(THREE, index = 0) {
   const forearmGeometry = shared.profile('forearm', [
     [0, 0], [.035, -.003], [.036, -.035], [.029, -.145], [.028, -.215], [0, -.217],
   ], 12);
-  const legs = [], arms = [], coatSleeves = [];
+  const legs = [], arms = [];
   for (const side of [-1, 1]) {
     const hip = new THREE.Group(); hip.position.set(side * .080, .790, 0); motion.add(hip);
     make(thighGeometry, outfit.trousers, hip, [0, 0, 0]);
@@ -137,31 +137,14 @@ export function createPerson(THREE, index = 0) {
 
     const shoulder = new THREE.Group(); shoulder.position.set(side * .172 * jacketWidth, .368, .004);
     shoulder.rotation.z = side * .072; body.add(shoulder);
-    const sleeve = make(armGeometry, outfit.jacket, shoulder, [0, 0, 0]);
+    make(armGeometry, outfit.jacket, shoulder, [0, 0, 0]);
     const elbow = new THREE.Group(); elbow.position.y = -.245; shoulder.add(elbow);
-    const forearm = make(forearmGeometry, outfit.jacket, elbow, [0, 0, 0]);
+    make(forearmGeometry, outfit.jacket, elbow, [0, 0, 0]);
     oval(outfit.shirt, elbow, [0, -.211, 0], [.027, .018, .026]);
     const hand = oval(skin, elbow, [0, -.248, .003], [.026, .045, .024]);
     hand.rotation.z = side * -.08;
     arms.push({shoulder, elbow, side});
-    coatSleeves.push(sleeve, forearm);
   }
-
-  // A hooded raincoat follows the body and leaves the face visible.
-  const raincoat = new THREE.Group(); raincoat.name = 'raincoat'; raincoat.visible = false; motion.add(raincoat);
-  const coatColor = ['#d5aa4b', '#8da9a5', '#c88366', '#9aa76d', '#a68fa6'][outfitIndex];
-  const coatMaterial = shared.material(coatColor, true);
-  const coat = new THREE.Mesh(new THREE.CylinderGeometry(.17, .265, .66, 12, 1, true), coatMaterial);
-  coat.position.y = 1.01; coat.castShadow = true; raincoat.add(coat);
-  const hood = new THREE.Mesh(new THREE.SphereGeometry(.145, 16, 10, Math.PI, Math.PI, 0, Math.PI * .74), coatMaterial);
-  hood.position.set(0, 1.386, -.015); hood.scale.set(1, 1.15, 1); raincoat.add(hood);
-  const brim = new THREE.Mesh(new THREE.TorusGeometry(.106, .012, 5, 12, 0, Math.PI), coatMaterial);
-  brim.position.set(0, 1.433, .065); brim.rotation.x = -.3; raincoat.add(brim);
-  const jacketMaterial = shared.material(outfit.jacket);
-  const setRaincoat = visible => {
-    raincoat.visible = visible;
-    for (const sleeve of coatSleeves) sleeve.material = visible ? coatMaterial : jacketMaterial;
-  };
 
   const phaseOffset = index * 2.399963;
   const cycle = 1.4;
@@ -226,11 +209,10 @@ export function createPerson(THREE, index = 0) {
       const swing = Math.cos(phase + (arm.side === 1 ? Math.PI : 0));
       arm.shoulder.rotation.x = -.065 + swing * .17 * amount;
       arm.elbow.rotation.x = -.16 - Math.max(0, -swing) * .045 * amount;
-      arm.shoulder.rotation.z = arm.side * .072;
     }
     head.rotation.y = -body.rotation.y * .7 + Math.sin(phase * .21) * .014 * amount;
     head.rotation.z = -body.rotation.z * .85;
   };
   animate(0, 0);
-  return {group, raincoat, setRaincoat, animate, height: 1.5};
+  return {group, animate, height: 1.5};
 }
