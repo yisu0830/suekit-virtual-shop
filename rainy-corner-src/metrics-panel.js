@@ -47,16 +47,16 @@ function drawChart(rows, title) {
   // Leave missing values as gaps. A continuous line must not imply unknown data.
   const entries = rows.map((row) => ({
     label: String(row?.label ?? ''),
-    requests: finite(row?.requests) ? row.requests : null,
+    views: finite(row?.pageviews) ? row.pageviews : null,
   }));
-  if (!entries.some((entry) => entry.requests !== null)) return null;
+  if (!entries.some((entry) => entry.views !== null)) return null;
   const width = 310;
   const height = 134;
   const left = 4;
   const right = width - 4;
   const top = 13;
   const bottom = height - 27;
-  const max = Math.max(1, ...entries.map((entry) => entry.requests ?? 0));
+  const max = Math.max(1, ...entries.map((entry) => entry.views ?? 0));
   const x = (index) => entries.length === 1 ? width / 2 : left + index * (right - left) / (entries.length - 1);
   const y = (value) => bottom - value / max * (bottom - top);
   const wrapper = el('div', 'metric-chart');
@@ -78,24 +78,24 @@ function drawChart(rows, title) {
     segment = [];
   };
   entries.forEach((entry, index) => {
-    if (entry.requests === null) flush();
-    else segment.push({ x: x(index), y: y(entry.requests) });
+    if (entry.views === null) flush();
+    else segment.push({ x: x(index), y: y(entry.views) });
   });
   flush();
-  const readout = el('p', 'metric-chart-readout', '移动或聚焦图中圆点，查看请求次数');
+  const readout = el('p', 'metric-chart-readout', '移动或聚焦图中圆点，查看浏览量');
   readout.setAttribute('aria-live', 'polite');
   const initialReadout = readout.textContent;
   entries.forEach((entry, index) => {
-    if (entry.requests === null) return;
+    if (entry.views === null) return;
     const dot = svgEl('circle', {
-      cx: x(index), cy: y(entry.requests), r: 3.1,
+      cx: x(index), cy: y(entry.views), r: 3.1,
       tabindex: '0', role: 'img', class: 'metric-chart-dot',
-      'aria-label': `${entry.label}，${displayNumber(entry.requests, true)} 次资源请求`,
+      'aria-label': `${entry.label}，${displayNumber(entry.views, true)} 次浏览`,
     });
     const dotTitle = svgEl('title');
-    dotTitle.textContent = `${entry.label} · ${displayNumber(entry.requests, true)} 次`;
+    dotTitle.textContent = `${entry.label} · ${displayNumber(entry.views, true)} 次`;
     dot.append(dotTitle);
-    const show = () => { readout.textContent = `${entry.label} · ${displayNumber(entry.requests, true)} 次资源请求`; };
+    const show = () => { readout.textContent = `${entry.label} · ${displayNumber(entry.views, true)} 次浏览`; };
     const reset = () => { readout.textContent = initialReadout; };
     dot.addEventListener('pointerenter', show);
     dot.addEventListener('focus', show);
@@ -117,10 +117,10 @@ function drawChart(rows, title) {
   return wrapper;
 }
 
-function toolRanking(tools) {
+function toolRanking(tools, unit = '次') {
   const sorted = tools.filter((tool) => finite(tool?.clicks))
     .map((tool) => ({ name: String(tool.name || '未命名工具'), clicks: tool.clicks }))
-    .sort((a, b) => b.clicks - a.clicks);
+    .sort((a, b) => b.clicks - a.clicks).slice(0, 5);
   if (!sorted.length) return null;
   const list = el('ol', 'metric-tools');
   const maximum = Math.max(1, ...sorted.map((tool) => tool.clicks));
@@ -129,7 +129,7 @@ function toolRanking(tools) {
     const row = el('div', 'metric-tool-row');
     const name = el('span', 'metric-tool-name');
     name.append(el('span', 'metric-tool-rank', String(index + 1).padStart(2, '0')), document.createTextNode(tool.name));
-    row.append(name, el('span', 'metric-tool-value', `${displayNumber(tool.clicks, true)} 次`));
+    row.append(name, el('span', 'metric-tool-value', `${displayNumber(tool.clicks, true)} ${unit}`));
     const track = el('div', 'metric-tool-track');
     const bar = el('div', 'metric-tool-bar');
     bar.style.width = `${100 * tool.clicks / maximum}%`;
@@ -159,8 +159,9 @@ export function mountMetricsPanel(root, initialData = {}) {
     const header = el('header', 'metrics-header');
     const title = el('h2', 'metrics-title', 'suekit流量与使用情况');
     const sourceMeta = el('div', 'metrics-source-meta');
-    const snapshot = data.sourceMode !== 'live';
-    const badge = el('span', 'metrics-data-badge', snapshot ? '数据快照' : '已更新数据');
+    const pending = data.sourceMode === 'pending';
+    const stale = data.observedAt && Date.now() - new Date(data.observedAt).getTime() > 86400000;
+    const badge = el('span', 'metrics-data-badge', pending ? 'Umami · 待接入' : stale || data.loadError ? 'Umami · 历史快照' : 'Umami · 数据快照');
     sourceMeta.append(badge);
     const observed = formatObservedAt(data.observedAt);
     if (observed) sourceMeta.append(el('span', 'metrics-observed-time', `最近更新：${observed}`));
@@ -169,31 +170,34 @@ export function mountMetricsPanel(root, initialData = {}) {
     const summary = el('section', 'metrics-summary');
     summary.setAttribute('aria-label', data.windowLabel || '近 24 小时统计');
     const total = el('div', 'metric-summary-card');
-    const totalValue = el('p', 'metric-summary-value', displayNumber(data.assetRequests, true));
-    totalValue.append(el('span', 'metric-summary-unit', '次'));
-    total.append(el('p', 'metric-summary-label', '资源请求'), totalValue, el('p', 'metric-summary-caption', data.windowLabel || '近 24 小时'));
+    const totalValue = el('p', 'metric-summary-value', displayNumber(data.visitors, true));
+    totalValue.append(el('span', 'metric-summary-unit', '人'));
+    total.append(el('p', 'metric-summary-label', '访客数'), totalValue, el('p', 'metric-summary-caption', data.windowLabel || '近 24 小时'));
     const average = el('div', 'metric-summary-card');
-    const averageValue = el('p', 'metric-summary-value', displayNumber(finite(data.assetRequests) ? data.assetRequests / 24 : null));
+    const averageValue = el('p', 'metric-summary-value', displayNumber(data.pageviews, true));
     averageValue.append(el('span', 'metric-summary-unit', '次'));
-    average.append(el('p', 'metric-summary-label', '每小时平均'), averageValue, el('p', 'metric-summary-caption', '24 小时总量 ÷ 24'));
+    average.append(el('p', 'metric-summary-label', '浏览量'), averageValue, el('p', 'metric-summary-caption', data.windowLabel || '近 24 小时'));
     summary.append(total, average);
 
-    const hourly = section('每小时资源请求', '24H');
-    const hourlyChart = Array.isArray(data.hourly) && data.hourly.length ? drawChart(data.hourly, '近 24 小时的每小时资源请求次数') : null;
-    hourly.append(hourlyChart || emptyState('暂无逐小时明细', '当前仅有近 24 小时总量，接入明细后显示时段变化。'));
+    const hourly = section('近 24 小时趋势', '浏览量 · 24H');
+    const hourlyChart = Array.isArray(data.hourly) && data.hourly.length ? drawChart(data.hourly, '近 24 小时的每小时浏览量') : null;
+    hourly.append(hourlyChart || emptyState('暂无逐小时明细', '接入 Umami 后展示每小时浏览量。'));
 
-    const daily = section('近 7 天趋势', '7D');
-    const dailyChart = Array.isArray(data.daily) && data.daily.length ? drawChart(data.daily, '近 7 天的每日资源请求次数') : null;
+    const daily = section('近 7 天趋势', '浏览量 · 7D');
+    const dailyChart = Array.isArray(data.daily) && data.daily.length ? drawChart(data.daily, '近 7 天的每日浏览量') : null;
     if (finite(data.weeklyTotal)) {
       const weekly = el('p', 'metric-period-total', '7 天累计 ');
       weekly.append(el('strong', '', `${displayNumber(data.weeklyTotal, true)} 次`));
       daily.append(weekly);
     }
-    daily.append(dailyChart || emptyState('暂无每日趋势', finite(data.weeklyTotal) ? '已获取 7 天总量，尚无每日明细。' : '还未获取近 7 天的每日资源请求数据。'));
+    daily.append(dailyChart || emptyState('暂无每日趋势', finite(data.weeklyTotal) ? '已获取 7 天总量，尚无每日明细。' : '接入 Umami 后展示每日浏览量。'));
 
-    const popular = section('热门工具', '点击次数');
-    const ranking = Array.isArray(data.tools) ? toolRanking(data.tools) : null;
-    popular.append(ranking || emptyState('暂无工具点击数据', '接入点击统计后，显示工具使用次数与排名。', 'tools'));
+    const hasTools = Array.isArray(data.tools) && data.tools.length > 0;
+    const hasPages = Array.isArray(data.pages) && data.pages.length > 0;
+    const popular = section(hasTools || !hasPages ? (data.rankingTitle || '热门工具') : '热门页面', hasTools ? '次数 · 近 7 天' : '访客 · 近 7 天');
+    const ranking = hasTools ? toolRanking(data.tools) : hasPages ? toolRanking(data.pages.map(page => ({ name: page.name, clicks: page.visitors })), '人') : null;
+    popular.append(ranking || emptyState('暂无工具点击数据', '尚未获得工具点击记录，记录后可展示使用排名。', 'tools'));
+    if (pending || data.loadError) header.append(el('p', 'metrics-subtitle', pending ? '等待连接 Umami，暂无可用数据' : '更新暂不可用，保留上次的数据快照'));
 
     root.append(header, summary, hourly, daily, popular);
   }
