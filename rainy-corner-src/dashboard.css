@@ -18,8 +18,8 @@ html[data-mode="night"] .switch-group button[aria-pressed="true"]{background:var
 .scene-heading p{margin:0 0 8px;font-size:10px;font-weight:600;letter-spacing:.2em;color:var(--ui-faint)}
 .scene-heading h1{margin:0;font-size:21px;font-weight:500;letter-spacing:.04em}
 .scene-heading .scene-description{margin:10px 0 0;font-size:11px;font-weight:400;letter-spacing:.04em;color:var(--ui-muted)}
-.suekit-entry{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid var(--ui-accent);border-radius:10px;background:var(--ui-accent);color:var(--ui-accent-text);font-size:11px;font-weight:600;letter-spacing:.04em;text-decoration:none;box-shadow:0 4px 14px #c9694c33;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .2s,transform .2s,box-shadow .2s}
-.suekit-entry:hover{background:#b95d42;transform:translateY(-2px);box-shadow:0 7px 18px #c9694c44}
+.suekit-entry{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 0;color:var(--ui-accent);font-size:12px;font-weight:600;letter-spacing:.04em;text-decoration:none;transition:opacity .2s}
+.suekit-entry:hover{opacity:.75}
 .suekit-entry:focus-visible{outline:2px solid var(--ui-accent);outline-offset:3px}
 .model-stage #world{position:absolute;inset:0;width:100%;height:100%}
 .model-toolbar{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);width:max-content;max-width:calc(100% - 24px);display:flex;flex-direction:column;align-items:center;gap:14px;z-index:5}

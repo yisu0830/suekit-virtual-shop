@@ -169,7 +169,7 @@ function percent(value){return finite(value)?`${(100*value).toFixed(1)}%`:'—';
 
 export function mountMetricsPanel(root, initialData = {}) {
   root.classList.add('metrics-panel'); root.setAttribute('aria-label','suekit 流量与工具使用统计');
-  let current=initialData, view='traffic', interval='daily', metric='pageviews';
+  let current=initialData, view='traffic', metric='pageviews';
   const views={traffic:'流量',audience:'来源设备',usage:'组件复制',conversion:'转化',paths:'路径'};
   function choices(items, selected, onSelect, label){
     const group=el('div','metric-choices');group.setAttribute('role','group');group.setAttribute('aria-label',label);
@@ -182,10 +182,8 @@ export function mountMetricsPanel(root, initialData = {}) {
     const cached=data.sourceMode==='daily-cache';
     const stale=data.stale||data.loadError||(cached&&Date.now()>Date.parse(data.nextUpdateAt)+7200000);
     const meta=el('div','metrics-source-meta');meta.append(el('span','metrics-data-badge',`${data.provider||'PostHog'} · ${stale?'上次数据':'每日更新'}`));
-    if(data.observedAt) meta.append(el('span','metrics-observed-time',`最近更新：${formatObservedAt(data.observedAt)}`));
-    header.append(meta,el('p','metrics-subtitle',`统计截至 ${data.reportDate||'昨日'} · 每日 01:00 更新`));
+    header.append(el('p','metrics-subtitle',`统计截至 ${data.reportDate||'昨日'} · 每日 01:00 更新`));
     header.append(el('p','metrics-method','2026/10/04 开始采集 · UTC+8'));
-    const link=el('a','metrics-dashboard-link','打开完整 PostHog 仪表盘 ↗');link.href='https://us.posthog.com/project/645031/dashboard/2168674';link.target='_blank';link.rel='noopener noreferrer';header.append(link);
     if(stale)header.append(el('p','metrics-subtitle','更新暂不可用，保留上次数据。'));
     root.append(header,choices(views,view,key=>{view=key;render();},'分析视图'));
     if(view==='traffic'){
@@ -197,13 +195,12 @@ export function mountMetricsPanel(root, initialData = {}) {
       const periods=section('流量总览','截至昨日');
       if(data.periods)periods.append(statTable(Object.entries({yesterday:'昨日',week:'最近 7 日',month:'最近 30 日'}).map(([key,label])=>{const p=data.periods[key]||{};return[label,displayNumber(p.visitors,true),displayNumber(p.pageviews,true),displayNumber(p.sessions,true)];}),['范围','访客','浏览','访问']));
       periods.append(el('p','metrics-method','访客按匿名浏览器去重；访问次数按会话去重，通常连续 30 分钟无操作后开始新会话。'));
-      const trend=section('流量趋势',({daily:'最近 30 日',weekly:'最近 12 周',monthly:'最近 12 月'})[interval]);
-      trend.append(choices({daily:'按天',weekly:'按周',monthly:'按月'},interval,key=>{interval=key;render();},'趋势粒度'));
+      const trend=section('流量趋势','按周 · 最近 12 周');
       trend.append(choices({visitors:'访客数',pageviews:'浏览量',sessions:'访问次数'},metric,key=>{metric=key;render();},'趋势指标'));
-      const rows=data.trends?.[interval];const metricNames={visitors:'访客数',pageviews:'浏览量',sessions:'访问次数'};
+      const rows=data.trends?.weekly;const metricNames={visitors:'访客数',pageviews:'浏览量',sessions:'访问次数'};
       const chart=rows?.length?drawChart(rows.map(r=>({...r,pageviews:r[metric]})),`${metricNames[metric]}趋势`,metricNames[metric]):null;
       trend.append(chart||emptyState('趋势数据尚未更新','等待下一次每日同步。'));
-      trend.append(el('p','metrics-method','周一为每周起点；按自然月统计。本周、本月仅累计到昨日。采集开始前没有历史数据。'));
+      trend.append(el('p','metrics-method','周一为每周起点，本周仅累计到昨日。采集开始前没有历史数据。'));
       root.append(periods,trend);
     } else if(view==='audience'){
       root.append(ranksSection('访问来源',data.sources,'次访问'),ranksSection('设备',data.devices),ranksSection('浏览器',data.browsers),ranksSection('大致地区',data.countries));
@@ -230,6 +227,7 @@ export function mountMetricsPanel(root, initialData = {}) {
       box.append(el('p','metrics-method','只包含已记录的操作，每次访问展示前 8 步；连续重复操作合并，忽略性能监测事件。'));
       root.append(box);
     }
+    const footer=el('footer','metrics-source-footer');footer.append(meta);root.append(footer);
   }
   render();return{update(data={}){current=data;render();}};
 }
