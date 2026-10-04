@@ -6,12 +6,12 @@ import { buildSeasons } from './seasons.js';
 import { buildStreet } from './street.js';
 import { buildVisitors } from './visitors.js';
 import { mountMetricsPanel } from './metrics-panel.js';
-import { shopMetrics } from './metrics-data.js';
+import { shopMetrics, loadShopMetrics } from './metrics-data.js';
 
 // All textures, geometry, lighting and animation are made locally at runtime.
 const canvas = document.getElementById('world');
 const modelStage = document.querySelector('.model-stage');
-mountMetricsPanel(document.getElementById('metrics-panel'), shopMetrics);
+const metricsPanel = mountMetricsPanel(document.getElementById('metrics-panel'), shopMetrics);
 const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
 renderer.setSize(modelStage.clientWidth, modelStage.clientHeight, false);
@@ -173,7 +173,16 @@ const hardware=buildHardware(ctx);
 ctx.awning=hardware.awning;
 const street=buildStreet(ctx);
 const seasons=buildSeasons(ctx);
-const visitors=buildVisitors(ctx);
+let visitors=buildVisitors(ctx, shopMetrics);
+loadShopMetrics().then(data => {
+  metricsPanel.update(data);
+  scene.remove(visitors.group);
+  visitors.group.clear();
+  visitors=buildVisitors(ctx, data);
+  recordState();
+}).catch(() => {
+  metricsPanel.update({ ...shopMetrics, loadError: true });
+});
 const artificialLights=[];
 const emissiveMaterials=new Set();
 const lightHalos=[];
@@ -233,8 +242,8 @@ function recordState(){
   let objects=0;scene.traverse(()=>objects++);root.dataset.sceneObjects=String(objects);
   root.dataset.doorAngles=(hardware.doors||[]).map(d=>d.rotation.y.toFixed(3)).join(',');
   root.dataset.customerCount=String(visitors.count);
-  root.dataset.assetRequests=String(visitors.traffic.assetRequests);
-  root.dataset.customerSource=visitors.traffic.source;
+  root.dataset.visitorCount=String(visitors.traffic.visitors ?? '');
+  root.dataset.customerSource=visitors.traffic.sourceMode;
   root.dataset.customerActivities=visitors.people.map(p=>p.state).join(',');
   root.dataset.customerPositions=visitors.people.map(p=>p.group.position.toArray().map(v=>v.toFixed(3)).join(',')).join(';');
   root.dataset.entranceOpening=visitors.opening.toFixed(3);
