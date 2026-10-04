@@ -117,13 +117,13 @@ const rng=()=>{randomSeed=(1664525*randomSeed+1013904223)>>>0;return randomSeed/
 const ctx={THREE,scene,mat,box,cyl,tube,panel,label,glow,rng};
 
 // The model is contained on one thick, square display plinth.
-const plinth=box(12,.47,12,0,-.12,0,mat('#29354c'),true);
-const baseRim=box(11.95,.10,11.95,0,.155,0,mat('#44516a'),false);
-const baseTop=box(11.84,.018,11.84,0,.214,0,mat('#344357'),false);
+const plinth=box(12,.47,12,0,-.12,0,mat('#3b3430'),true);
+const baseRim=box(11.95,.10,11.95,0,.155,0,mat('#66584b'),false);
+const baseTop=box(11.84,.018,11.84,0,.214,0,mat('#4b4238'),false);
 // Subtle layered edge reveals the collectible model's physical thickness.
 for(const z of [-6.004,6.004])box(11.98,.022,.016,0,-.13,z,mat('#72808a'),false);
 for(const x of [-6.004,6.004])box(.016,.022,11.98,x,-.13,0,mat('#72808a'),false);
-const asphalt=new THREE.MeshPhysicalMaterial({color:'#263344',roughness:.27,metalness:.24,clearcoat:.9,clearcoatRoughness:.17});
+const asphalt=new THREE.MeshPhysicalMaterial({color:'#393631',roughness:.27,metalness:.24,clearcoat:.9,clearcoatRoughness:.17});
 box(12,.03,3.8,0,.237,4.10,asphalt,false);
 box(2.66,.03,8.2,4.67,.237,-1.9,asphalt,false);
 // Paving is individually jointed rather than a flat grey rectangle.
@@ -162,7 +162,7 @@ const reflectionShader={
     vec4 base = texture2DProj( tDiffuse, q );
     vec2 p=vec2(groundUv.x*12.0-6.0,6.0-groundUv.y*12.0);
     if(p.x<3.38 && p.y<2.24) discard;`).replace('gl_FragColor = vec4( blendOverlay( base.rgb, color ), 1.0 );',`float puddle=.18+.15*smoothstep(-.3,.8,sin(groundUv.x*47.0)*sin(groundUv.y*39.0));
-    gl_FragColor=vec4(base.rgb*vec3(.78,.87,1.0),puddle);`)
+    gl_FragColor=vec4(base.rgb*vec3(1.0,.91,.78),puddle);`)
 };
 reflectionShader.uniforms.wetTime={value:0};
 const wet=new Reflector(new THREE.PlaneGeometry(12,12),{textureWidth:768,textureHeight:768,clipBias:.001,shader:reflectionShader,multisample:0});
@@ -256,18 +256,18 @@ function applyState(){
   for(const b of modeButtons)b.setAttribute('aria-pressed',String(b.dataset.modeChoice===state.mode));
   for(const b of seasonButtons)b.setAttribute('aria-pressed',String(b.dataset.seasonChoice===state.season));
   const daylight={spring:'#ffe9c3',summer:'#fff3d4',autumn:'#ffd4a3',winter:'#dfebf5'};
-  skyLight.color.set(night?'#829bc5':daylight[state.season]);
-  skyLight.groundColor.set(night?'#333147':'#999588');skyLight.intensity=night?.78:2.05;
-  moon.color.set(night?'#abc1ed':daylight[state.season]);moon.intensity=night?1.25:2.45;
+  skyLight.color.set(night?'#d6b995':daylight[state.season]);
+  skyLight.groundColor.set(night?'#49392f':'#999588');skyLight.intensity=night?.78:2.05;
+  moon.color.set(night?'#ffe0b2':daylight[state.season]);moon.intensity=night?1.25:2.45;
   moon.position.set(night?-5:-7,night?12:13,night?6:9);
-  scene.fog.color.set(night?'#19253a':state.season==='winter'?'#e4ebef':'#eee7db');
+  scene.fog.color.set(night?'#302923':state.season==='winter'?'#e4ebef':'#eee7db');
   scene.fog.density=night?.012:.007;
   renderer.toneMappingExposure=night?1.10:.99;
-  ink.color.set(night?'#182636':'#574940');ink.opacity=night?.68:.48;
-  plinth.material.color.set(night?'#29354c':'#a2a29a');
-  baseRim.material.color.set(night?'#44516a':'#bbb9ad');
-  baseTop.material.color.set(night?'#344357':'#91958f');
-  asphalt.color.set(night?'#263344':'#687273');
+  ink.color.set(night?'#302822':'#574940');ink.opacity=night?.68:.48;
+  plinth.material.color.set(night?'#3b3430':'#a2a29a');
+  baseRim.material.color.set(night?'#66584b':'#bbb9ad');
+  baseTop.material.color.set(night?'#4b4238':'#91958f');
+  asphalt.color.set(night?'#393631':'#687273');
   asphalt.roughness=summer?.48:.82;asphalt.metalness=summer?.08:.02;asphalt.clearcoat=summer?.35:0;
   for(const l of artificialLights)l.intensity=night?l.userData.nightIntensity:0;
   for(const m of emissiveMaterials)m.emissiveIntensity=night?m.userData.nightEmission:0;
@@ -276,7 +276,7 @@ function applyState(){
   for(const p of hardware.unlitPanels||[])p.material.color.set(night?'#ffead4':'#ffffff');
   seasons.setSeason(state.season);
   wet.visible=summer;puddleGroup.visible=summer;rippleGroup.visible=summer;rain.visible=summer;
-  rain.material.color.set(night?'#b7dce8':'#355e78');rain.material.opacity=night?.36:.52;
+  rain.material.color.set(night?'#e2cfaf':'#355e78');rain.material.opacity=night?.36:.52;
   for(const d of drips)d.visible=summer;
   shadow.material.opacity=night?.6:.30;
   renderer.shadowMap.needsUpdate=true;
