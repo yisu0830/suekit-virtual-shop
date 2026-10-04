@@ -3,7 +3,7 @@ export const websiteId = '50b7f572-2676-4362-b56e-6ddbea82141c';
 export const shopMetrics = Object.freeze(snapshot);
 export async function loadShopMetrics() {
   if (location.protocol === 'file:') return shopMetrics;
-  const response = await fetch(new URL('./analytics.json', location.href), {
+  const response = await fetch('https://suekit-analytics.jiongxiaosu0830.workers.dev/analytics.json', {
     cache: 'no-store', signal: AbortSignal.timeout(10000),
   });
   if (!response.ok) throw new Error('统计数据暂时无法读取');

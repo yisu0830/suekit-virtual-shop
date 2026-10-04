@@ -160,12 +160,15 @@ export function mountMetricsPanel(root, initialData = {}) {
     const title = el('h2', 'metrics-title', 'suekit流量与使用情况');
     const sourceMeta = el('div', 'metrics-source-meta');
     const pending = data.sourceMode === 'pending';
-    const stale = data.observedAt && Date.now() - new Date(data.observedAt).getTime() > 86400000;
-    const badge = el('span', 'metrics-data-badge', pending ? 'Umami · 待接入' : stale || data.loadError ? 'Umami · 历史快照' : 'Umami · 数据快照');
+    const cached = data.sourceMode === 'daily-cache';
+    const provider = data.provider || 'Umami';
+    const stale = cached ? data.stale || Date.now() > Date.parse(data.nextUpdateAt) + 7200000 : data.observedAt && Date.now() - new Date(data.observedAt).getTime() > 86400000;
+    const badge = el('span', 'metrics-data-badge', pending ? `${provider} · 待接入` : stale || data.loadError ? `${provider} · 上次数据` : `${provider} · ${cached ? '每日更新' : '数据快照'}`);
     sourceMeta.append(badge);
     const observed = formatObservedAt(data.observedAt);
     if (observed) sourceMeta.append(el('span', 'metrics-observed-time', `最近更新：${observed}`));
     header.append(title, sourceMeta);
+    if (cached) header.append(el('p', 'metrics-subtitle', `统计日期：${data.reportDate} · 每日 01:00 更新`));
 
     const summary = el('section', 'metrics-summary');
     summary.setAttribute('aria-label', data.windowLabel || '近 24 小时统计');
@@ -179,25 +182,25 @@ export function mountMetricsPanel(root, initialData = {}) {
     average.append(el('p', 'metric-summary-label', '浏览量'), averageValue, el('p', 'metric-summary-caption', data.windowLabel || '近 24 小时'));
     summary.append(total, average);
 
-    const hourly = section('近 24 小时趋势', '浏览量 · 24H');
-    const hourlyChart = Array.isArray(data.hourly) && data.hourly.length ? drawChart(data.hourly, '近 24 小时的每小时浏览量') : null;
-    hourly.append(hourlyChart || emptyState('暂无逐小时明细', '接入 Umami 后展示每小时浏览量。'));
+    const hourly = section(data.hourlyTitle || '近 24 小时趋势', '浏览量 · 24H');
+    const hourlyChart = Array.isArray(data.hourly) && data.hourly.length ? drawChart(data.hourly, data.hourlyTitle || '近 24 小时的每小时浏览量') : null;
+    hourly.append(hourlyChart || emptyState('暂无逐小时明细', '接入统计后展示每小时浏览量。'));
 
-    const daily = section('近 7 天趋势', '浏览量 · 7D');
+    const daily = section('近 7 天趋势', data.weeklyLabel || '浏览量 · 7D');
     const dailyChart = Array.isArray(data.daily) && data.daily.length ? drawChart(data.daily, '近 7 天的每日浏览量') : null;
     if (finite(data.weeklyTotal)) {
       const weekly = el('p', 'metric-period-total', '7 天累计 ');
       weekly.append(el('strong', '', `${displayNumber(data.weeklyTotal, true)} 次`));
       daily.append(weekly);
     }
-    daily.append(dailyChart || emptyState('暂无每日趋势', finite(data.weeklyTotal) ? '已获取 7 天总量，尚无每日明细。' : '接入 Umami 后展示每日浏览量。'));
+    daily.append(dailyChart || emptyState('暂无每日趋势', finite(data.weeklyTotal) ? '已获取 7 天总量，尚无每日明细。' : '接入统计后展示每日浏览量。'));
 
     const hasTools = Array.isArray(data.tools) && data.tools.length > 0;
     const hasPages = Array.isArray(data.pages) && data.pages.length > 0;
-    const popular = section(hasTools || !hasPages ? (data.rankingTitle || '热门工具') : '热门页面', hasTools ? '次数 · 近 7 天' : '访客 · 近 7 天');
+    const popular = section(hasTools || !hasPages ? (data.rankingTitle || '热门工具') : '热门页面', hasTools || !hasPages ? '次数 · 近 7 天' : '访客 · 近 7 天');
     const ranking = hasTools ? toolRanking(data.tools) : hasPages ? toolRanking(data.pages.map(page => ({ name: page.name, clicks: page.visitors })), '人') : null;
     popular.append(ranking || emptyState('暂无工具点击数据', '尚未获得工具点击记录，记录后可展示使用排名。', 'tools'));
-    if (pending || data.loadError) header.append(el('p', 'metrics-subtitle', pending ? '等待连接 Umami，暂无可用数据' : '更新暂不可用，保留上次的数据快照'));
+    if (pending || data.loadError) header.append(el('p', 'metrics-subtitle', pending ? '等待连接统计服务，暂无可用数据' : '更新暂不可用，保留上次的数据快照'));
 
     root.append(header, summary, hourly, daily, popular);
   }

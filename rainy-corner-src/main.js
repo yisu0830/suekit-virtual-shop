@@ -174,15 +174,28 @@ ctx.awning=hardware.awning;
 const street=buildStreet(ctx);
 const seasons=buildSeasons(ctx);
 let visitors=buildVisitors(ctx, shopMetrics);
-loadShopMetrics().then(data => {
-  metricsPanel.update(data);
-  scene.remove(visitors.group);
-  visitors.group.clear();
-  visitors=buildVisitors(ctx, data);
-  recordState();
-}).catch(() => {
-  metricsPanel.update({ ...shopMetrics, loadError: true });
-});
+let currentMetrics = shopMetrics;
+let metricsTimer;
+async function updateShopMetrics() {
+  clearTimeout(metricsTimer);
+  try {
+    const data = await loadShopMetrics();
+    metricsPanel.update(data);
+    if (data.visitors !== currentMetrics.visitors) {
+      scene.remove(visitors.group);
+      visitors.group.clear();
+      visitors=buildVisitors(ctx, data);
+      recordState();
+    }
+    currentMetrics = data;
+    const next = Date.parse(data.nextUpdateAt) + 5 * 60000;
+    metricsTimer = setTimeout(updateShopMetrics, Math.max(3600000, next - Date.now()));
+  } catch {
+    metricsPanel.update({ ...currentMetrics, loadError: true });
+    metricsTimer = setTimeout(updateShopMetrics, 3600000);
+  }
+}
+updateShopMetrics();
 const artificialLights=[];
 const emissiveMaterials=new Set();
 const lightHalos=[];
