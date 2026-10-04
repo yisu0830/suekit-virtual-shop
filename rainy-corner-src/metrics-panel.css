@@ -18,7 +18,8 @@
   scrollbar-width: thin;
   scrollbar-color: var(--mp-line) transparent;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-  transition: background .5s, color .5s;
+  /* Apply the panel theme immediately, matching the miniature's mode switch. */
+  transition: none;
 }
 .metrics-panel * { box-sizing: border-box; }
 .metrics-panel p, .metrics-panel h2, .metrics-panel h3 { margin: 0; }
