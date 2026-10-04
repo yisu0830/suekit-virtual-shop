@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "websiteId": "50b7f572-2676-4362-b56e-6ddbea82141c",
+  "sourceMode": "snapshot",
+  "observedAt": "2026-10-04T16:55:00+08:00",
+  "timezone": "Asia/Singapore",
+  "windowLabel": "近 24 小时",
+  "visitors": 9,
+  "pageviews": 22,
+  "hourly": [
+    {
+      "label": "10/03 16:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/03 17:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/03 18:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/03 19:00",
+      "pageviews": 5
+    },
+    {
+      "label": "10/03 20:00",
+      "pageviews": 4
+    },
+    {
+      "label": "10/03 21:00",
+      "pageviews": 1
+    },
+    {
+      "label": "10/03 22:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/03 23:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 00:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 01:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 02:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 03:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 04:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 05:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 06:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 07:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 08:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 09:00",
+      "pageviews": 4
+    },
+    {
+      "label": "10/04 10:00",
+      "pageviews": 1
+    },
+    {
+      "label": "10/04 11:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 12:00",
+      "pageviews": 6
+    },
+    {
+      "label": "10/04 13:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 14:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 15:00",
+      "pageviews": 1
+    },
+    {
+      "label": "10/04 16:00",
+      "pageviews": 0
+    }
+  ],
+  "daily": [
+    {
+      "label": "09/27",
+      "pageviews": 0
+    },
+    {
+      "label": "09/28",
+      "pageviews": 0
+    },
+    {
+      "label": "09/29",
+      "pageviews": 0
+    },
+    {
+      "label": "09/30",
+      "pageviews": 0
+    },
+    {
+      "label": "10/01",
+      "pageviews": 0
+    },
+    {
+      "label": "10/02",
+      "pageviews": 8
+    },
+    {
+      "label": "10/03",
+      "pageviews": 13
+    },
+    {
+      "label": "10/04",
+      "pageviews": 12
+    }
+  ],
+  "weeklyTotal": 33,
+  "weeklyVisitors": 18,
+  "tools": [
+    {
+      "name": "开始选择",
+      "event": "selection_start",
+      "clicks": 60
+    },
+    {
+      "name": "切换样式",
+      "event": "variant_select",
+      "clicks": 58
+    },
+    {
+      "name": "选择组件",
+      "event": "component_select",
+      "clicks": 38
+    },
+    {
+      "name": "切换场景",
+      "event": "scene_select",
+      "clicks": 35
+    },
+    {
+      "name": "切换格式",
+      "event": "format_select",
+      "clicks": 23
+    },
+    {
+      "name": "取消选择",
+      "event": "selection_cancel",
+      "clicks": 19
+    },
+    {
+      "name": "复制成功",
+      "event": "copy_success",
+      "clicks": 6
+    },
+    {
+      "name": "点击复制",
+      "event": "copy_click",
+      "clicks": 6
+    }
+  ],
+  "pages": [
+    {
+      "name": "SueKit 首页",
+      "visitors": 18
+    }
+  ],
+  "sourceUrl": "https://cloud.umami.is/analytics/us/websites/50b7f572-2676-4362-b56e-6ddbea82141c",
+  "provenance": "Authenticated Umami dashboard; hourly and daily chart values verified visually and via tooltips. Last 7 days includes partial boundary days. Event counts read from Events > Last 7 days; labels are translated from event names.",
+  "eventsTotal": 245,
+  "rankingTitle": "热门操作"
+}
