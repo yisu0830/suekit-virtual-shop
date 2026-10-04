@@ -87,3 +87,26 @@ html[data-mode="night"] .metrics-panel {
 }
 @media (max-width: 900px) { .metrics-panel { padding: 28px 23px 24px; } }
 @media (prefers-reduced-motion: reduce) { .metrics-panel { transition: none; } }
+.metrics-summary { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.metrics-panel .metric-summary-value { font-size: 34px; }
+.metrics-panel .metrics-method { color: var(--mp-muted); font-size: 10px; line-height: 1.75; margin-top: 12px; }
+.metrics-dashboard-link { display: inline-block; margin-top: 12px; color: var(--mp-red); font-size: 11px; text-decoration: none; }
+.metrics-dashboard-link:hover { text-decoration: underline; }
+.metric-choices { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 16px; }
+.metric-choices button { border: 1px solid var(--mp-line); border-radius: 8px; background: var(--mp-card); color: var(--mp-muted); padding: 7px 9px; font: inherit; font-size: 10px; cursor: pointer; }
+.metric-choices button[aria-pressed="true"] { background: var(--mp-red-soft); color: var(--mp-red); border-color: var(--mp-red); }
+.metric-choices button:focus-visible,.metrics-dashboard-link:focus-visible { outline: 2px solid var(--mp-red); outline-offset: 3px; }
+.metric-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 11px; font-variant-numeric: tabular-nums; }
+.metric-table th,.metric-table td { border-bottom: 1px solid var(--mp-line); padding: 10px 5px; text-align: right; color: var(--mp-muted); }
+.metric-table th:first-child,.metric-table td:first-child { text-align: left; }
+.metric-table th { font-weight: 500; color: var(--mp-faint); }
+.metric-table td { color: var(--mp-ink); }
+.metric-funnel,.metric-paths { list-style: none; padding: 0; margin: 20px 0 0; }
+.metric-funnel li { font-size: 11px; margin-top: 18px; color: var(--mp-muted); }
+.metric-funnel strong { float: right; font-weight: 500; color: var(--mp-ink); }
+.metric-funnel-track { clear: both; height: 8px; border-radius: 8px; background: var(--mp-track); margin-top: 10px; overflow: hidden; }
+.metric-funnel-track i { display: block; height: 100%; background: var(--mp-red); opacity: .75; border-radius: inherit; }
+.metric-paths li { padding: 14px 0; border-bottom: 1px solid var(--mp-line); }
+.metric-path-steps { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 10px; line-height: 1.5; }
+.metric-path-step { border-radius: 6px; background: var(--mp-card); padding: 5px 8px; color: var(--mp-ink); }
+.metric-path-arrow { color: var(--mp-red); }

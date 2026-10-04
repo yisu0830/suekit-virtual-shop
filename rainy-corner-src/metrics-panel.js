@@ -43,7 +43,7 @@ function section(title, kicker) {
   return box;
 }
 
-function drawChart(rows, title) {
+function drawChart(rows, title, metricName = '浏览量') {
   // Leave missing values as gaps. A continuous line must not imply unknown data.
   const entries = rows.map((row) => ({
     label: String(row?.label ?? ''),
@@ -82,7 +82,7 @@ function drawChart(rows, title) {
     else segment.push({ x: x(index), y: y(entry.views) });
   });
   flush();
-  const readout = el('p', 'metric-chart-readout', '移动或聚焦图中圆点，查看浏览量');
+  const readout = el('p', 'metric-chart-readout', `移动或聚焦图中圆点，查看${metricName}`);
   readout.setAttribute('aria-live', 'polite');
   const initialReadout = readout.textContent;
   entries.forEach((entry, index) => {
@@ -90,12 +90,12 @@ function drawChart(rows, title) {
     const dot = svgEl('circle', {
       cx: x(index), cy: y(entry.views), r: 3.1,
       tabindex: '0', role: 'img', class: 'metric-chart-dot',
-      'aria-label': `${entry.label}，${displayNumber(entry.views, true)} 次浏览`,
+      'aria-label': `${entry.label}，${displayNumber(entry.views, true)} ${metricName}`,
     });
     const dotTitle = svgEl('title');
     dotTitle.textContent = `${entry.label} · ${displayNumber(entry.views, true)} 次`;
     dot.append(dotTitle);
-    const show = () => { readout.textContent = `${entry.label} · ${displayNumber(entry.views, true)} 次浏览`; };
+    const show = () => { readout.textContent = `${entry.label} · ${displayNumber(entry.views, true)} ${metricName}`; };
     const reset = () => { readout.textContent = initialReadout; };
     dot.addEventListener('pointerenter', show);
     dot.addEventListener('focus', show);
@@ -120,7 +120,7 @@ function drawChart(rows, title) {
 function toolRanking(tools, unit = '次') {
   const sorted = tools.filter((tool) => finite(tool?.clicks))
     .map((tool) => ({ name: String(tool.name || '未命名工具'), clicks: tool.clicks }))
-    .sort((a, b) => b.clicks - a.clicks).slice(0, 5);
+    .sort((a, b) => b.clicks - a.clicks).slice(0, 10);
   if (!sorted.length) return null;
   const list = el('ol', 'metric-tools');
   const maximum = Math.max(1, ...sorted.map((tool) => tool.clicks));
@@ -151,59 +151,85 @@ function formatObservedAt(value) {
   }).format(date);
 }
 
+function statTable(rows, headings) {
+  const table=el('table','metric-table');
+  const head=el('thead'); const hr=el('tr');
+  headings.forEach(label=>{const th=el('th','',label);th.scope='col';hr.append(th);});head.append(hr);
+  const body=el('tbody');
+  rows.forEach(row=>{const tr=el('tr');row.forEach(value=>tr.append(el('td','',String(value))));body.append(tr);});
+  table.append(head,body);return table;
+}
+function ranksSection(title, rows, unit='人', kicker='近 30 日 · 前 10') {
+  const box=section(title,kicker);
+  const list=toolRanking((rows||[]).map(row=>({name:row.name,clicks:row.count})),unit);
+  box.append(list||emptyState('暂无记录','数据从 2026/10/04 开始积累。','tools'));
+  return box;
+}
+function percent(value){return finite(value)?`${(100*value).toFixed(1)}%`:'—';}
+
 export function mountMetricsPanel(root, initialData = {}) {
-  root.classList.add('metrics-panel');
-  root.setAttribute('aria-label', 'suekit 流量与工具使用统计');
-  function update(data = {}) {
-    root.replaceChildren();
-    const header = el('header', 'metrics-header');
-    const title = el('h2', 'metrics-title', 'suekit流量与使用情况');
-    const sourceMeta = el('div', 'metrics-source-meta');
-    const pending = data.sourceMode === 'pending';
-    const cached = data.sourceMode === 'daily-cache';
-    const provider = data.provider || 'Umami';
-    const stale = cached ? data.stale || Date.now() > Date.parse(data.nextUpdateAt) + 7200000 : data.observedAt && Date.now() - new Date(data.observedAt).getTime() > 86400000;
-    const badge = el('span', 'metrics-data-badge', pending ? `${provider} · 待接入` : stale || data.loadError ? `${provider} · 上次数据` : `${provider} · ${cached ? '每日更新' : '数据快照'}`);
-    sourceMeta.append(badge);
-    const observed = formatObservedAt(data.observedAt);
-    if (observed) sourceMeta.append(el('span', 'metrics-observed-time', `最近更新：${observed}`));
-    header.append(title, sourceMeta);
-    if (cached) header.append(el('p', 'metrics-subtitle', `统计日期：${data.reportDate} · 每日 01:00 更新`));
-
-    const summary = el('section', 'metrics-summary');
-    summary.setAttribute('aria-label', data.windowLabel || '近 24 小时统计');
-    const total = el('div', 'metric-summary-card');
-    const totalValue = el('p', 'metric-summary-value', displayNumber(data.visitors, true));
-    totalValue.append(el('span', 'metric-summary-unit', '人'));
-    total.append(el('p', 'metric-summary-label', '访客数'), totalValue, el('p', 'metric-summary-caption', data.windowLabel || '近 24 小时'));
-    const average = el('div', 'metric-summary-card');
-    const averageValue = el('p', 'metric-summary-value', displayNumber(data.pageviews, true));
-    averageValue.append(el('span', 'metric-summary-unit', '次'));
-    average.append(el('p', 'metric-summary-label', '浏览量'), averageValue, el('p', 'metric-summary-caption', data.windowLabel || '近 24 小时'));
-    summary.append(total, average);
-
-    const hourly = section(data.hourlyTitle || '近 24 小时趋势', '浏览量 · 24H');
-    const hourlyChart = Array.isArray(data.hourly) && data.hourly.length ? drawChart(data.hourly, data.hourlyTitle || '近 24 小时的每小时浏览量') : null;
-    hourly.append(hourlyChart || emptyState('暂无逐小时明细', '接入统计后展示每小时浏览量。'));
-
-    const daily = section('近 7 天趋势', data.weeklyLabel || '浏览量 · 7D');
-    const dailyChart = Array.isArray(data.daily) && data.daily.length ? drawChart(data.daily, '近 7 天的每日浏览量') : null;
-    if (finite(data.weeklyTotal)) {
-      const weekly = el('p', 'metric-period-total', '7 天累计 ');
-      weekly.append(el('strong', '', `${displayNumber(data.weeklyTotal, true)} 次`));
-      daily.append(weekly);
-    }
-    daily.append(dailyChart || emptyState('暂无每日趋势', finite(data.weeklyTotal) ? '已获取 7 天总量，尚无每日明细。' : '接入统计后展示每日浏览量。'));
-
-    const hasTools = Array.isArray(data.tools) && data.tools.length > 0;
-    const hasPages = Array.isArray(data.pages) && data.pages.length > 0;
-    const popular = section(hasTools || !hasPages ? (data.rankingTitle || '热门工具') : '热门页面', hasTools || !hasPages ? '次数 · 近 7 天' : '访客 · 近 7 天');
-    const ranking = hasTools ? toolRanking(data.tools) : hasPages ? toolRanking(data.pages.map(page => ({ name: page.name, clicks: page.visitors })), '人') : null;
-    popular.append(ranking || emptyState('暂无工具点击数据', '尚未获得工具点击记录，记录后可展示使用排名。', 'tools'));
-    if (pending || data.loadError) header.append(el('p', 'metrics-subtitle', pending ? '等待连接统计服务，暂无可用数据' : '更新暂不可用，保留上次的数据快照'));
-
-    root.append(header, summary, hourly, daily, popular);
+  root.classList.add('metrics-panel'); root.setAttribute('aria-label','suekit 流量与工具使用统计');
+  let current=initialData, view='traffic', interval='daily', metric='pageviews';
+  const views={traffic:'流量',audience:'来源设备',usage:'组件复制',conversion:'转化',paths:'路径'};
+  function choices(items, selected, onSelect, label){
+    const group=el('div','metric-choices');group.setAttribute('role','group');group.setAttribute('aria-label',label);
+    Object.entries(items).forEach(([key,name])=>{const b=el('button','',name);b.type='button';b.setAttribute('aria-pressed',String(selected===key));b.addEventListener('click',()=>onSelect(key));group.append(b);});return group;
   }
-  update(initialData);
-  return { update };
+  function render(){
+    const data=current;root.replaceChildren();
+    const header=el('header','metrics-header');
+    header.append(el('h2','metrics-title','suekit流量与使用情况'));
+    const cached=data.sourceMode==='daily-cache';
+    const stale=data.stale||data.loadError||(cached&&Date.now()>Date.parse(data.nextUpdateAt)+7200000);
+    const meta=el('div','metrics-source-meta');meta.append(el('span','metrics-data-badge',`${data.provider||'PostHog'} · ${stale?'上次数据':'每日更新'}`));
+    if(data.observedAt) meta.append(el('span','metrics-observed-time',`最近更新：${formatObservedAt(data.observedAt)}`));
+    header.append(meta,el('p','metrics-subtitle',`统计截至 ${data.reportDate||'昨日'} · 每日 01:00 更新`));
+    header.append(el('p','metrics-method','2026/10/04 开始采集 · UTC+8'));
+    const link=el('a','metrics-dashboard-link','打开完整 PostHog 仪表盘 ↗');link.href='https://us.posthog.com/project/645031/dashboard/2168674';link.target='_blank';link.rel='noopener noreferrer';header.append(link);
+    if(stale)header.append(el('p','metrics-subtitle','更新暂不可用，保留上次数据。'));
+    root.append(header,choices(views,view,key=>{view=key;render();},'分析视图'));
+    if(view==='traffic'){
+      const summary=el('section','metrics-summary');summary.setAttribute('aria-label','昨日流量');
+      [['visitors','访客数','人'],['pageviews','浏览量','次'],['sessions','访问次数','次']].forEach(([key,label,unit])=>{
+        const card=el('div','metric-summary-card');const value=el('p','metric-summary-value',displayNumber(data[key],true));value.append(el('span','metric-summary-unit',unit));
+        card.append(el('p','metric-summary-label',label),value,el('p','metric-summary-caption','昨日'));summary.append(card);
+      });root.append(summary);
+      const periods=section('流量总览','截至昨日');
+      if(data.periods)periods.append(statTable(Object.entries({yesterday:'昨日',week:'最近 7 日',month:'最近 30 日'}).map(([key,label])=>{const p=data.periods[key]||{};return[label,displayNumber(p.visitors,true),displayNumber(p.pageviews,true),displayNumber(p.sessions,true)];}),['范围','访客','浏览','访问']));
+      periods.append(el('p','metrics-method','访客按匿名浏览器去重；访问次数按会话去重，通常连续 30 分钟无操作后开始新会话。'));
+      const trend=section('流量趋势',({daily:'最近 30 日',weekly:'最近 12 周',monthly:'最近 12 月'})[interval]);
+      trend.append(choices({daily:'按天',weekly:'按周',monthly:'按月'},interval,key=>{interval=key;render();},'趋势粒度'));
+      trend.append(choices({visitors:'访客数',pageviews:'浏览量',sessions:'访问次数'},metric,key=>{metric=key;render();},'趋势指标'));
+      const rows=data.trends?.[interval];const metricNames={visitors:'访客数',pageviews:'浏览量',sessions:'访问次数'};
+      const chart=rows?.length?drawChart(rows.map(r=>({...r,pageviews:r[metric]})),`${metricNames[metric]}趋势`,metricNames[metric]):null;
+      trend.append(chart||emptyState('趋势数据尚未更新','等待下一次每日同步。'));
+      trend.append(el('p','metrics-method','周一为每周起点；按自然月统计。本周、本月仅累计到昨日。采集开始前没有历史数据。'));
+      root.append(periods,trend);
+    } else if(view==='audience'){
+      root.append(ranksSection('访问来源',data.sources,'次访问'),ranksSection('设备',data.devices),ranksSection('浏览器',data.browsers),ranksSection('大致地区',data.countries));
+      root.append(el('p','metrics-method','来源按会话内首个浏览的来源域名统计；设备、浏览器和地区按独立访客统计，各组人数不一定可以相加。'));
+    } else if(view==='usage'){
+      root.append(ranksSection('组件使用',data.components,'次选择'),ranksSection('样式使用',data.variants,'次切换'),ranksSection('输出格式',data.formats,'次切换'));
+      const copy=section('复制操作','最近 30 个完整日');
+      copy.append(statTable([['点击复制',displayNumber(data.copy?.copy_click,true)],['复制成功',displayNumber(data.copy?.copy_success,true)],['复制失败',displayNumber(data.copy?.copy_failure,true)]],['操作','次数']));
+      copy.append(el('p','metrics-method','复制次数是事件次数；一次点击可能触发重试，成功与失败次数不一定相加等于点击次数。'));
+      root.append(copy,ranksSection('全部操作',data.actions,'次','最近 30 日'));
+    } else if(view==='conversion'){
+      const flow=data.funnel;const box=section('访问到复制的转化','最近 30 个完整日');
+      if(flow){
+        const list=el('ol','metric-funnel');
+        [['访问网站',flow.visits],['选择组件',flow.selected],['复制成功',flow.copied]].forEach(([label,value],i)=>{const item=el('li');item.append(el('span','',`${i+1}. ${label}`),el('strong','',`${displayNumber(value,true)} 次访问`));const bar=el('div','metric-funnel-track');const fill=el('i');fill.style.width=`${flow.visits?100*value/flow.visits:0}%`;bar.append(fill);item.append(bar);list.append(item);});
+        box.append(list,statTable([['访问 → 选择组件',percent(flow.selectionRate)],['选择组件 → 复制成功',percent(flow.copyRate)],['访问 → 复制成功',percent(flow.conversionRate)]],['转化阶段','转化率']));
+        if(!flow.visits)box.append(el('p','metrics-method','当前没有访问记录，转化率暂无法计算。'));
+      }else box.append(emptyState('转化数据尚未更新','等待下一次每日同步。'));
+      box.append(el('p','metrics-method','按同一次访问中实际发生的顺序统计，每次访问在每一步最多计一次。复制成功表示浏览器报告复制操作成功。'));
+      root.append(box);
+    } else {
+      const box=section('常见操作路径','最近 30 日 · 前 8 条');
+      if(data.paths?.length){const list=el('ol','metric-paths');data.paths.forEach(path=>{const item=el('li');const steps=el('div','metric-path-steps');path.steps.forEach((step,i)=>{if(i)steps.append(el('span','metric-path-arrow','→'));steps.append(el('span','metric-path-step',step));});item.append(steps,el('p','metrics-method',`${displayNumber(path.count,true)} 次访问`));list.append(item);});box.append(list);}else box.append(emptyState('暂无操作路径','有访客访问或使用组件后，展示实际路径。'));
+      box.append(el('p','metrics-method','只包含已记录的操作，每次访问展示前 8 步；连续重复操作合并，忽略性能监测事件。'));
+      root.append(box);
+    }
+  }
+  render();return{update(data={}){current=data;render();}};
 }
