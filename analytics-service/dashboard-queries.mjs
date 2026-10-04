@@ -1,0 +1,10 @@
+import {analyticsQueries} from './worker.mjs';
+import {writeFile} from 'node:fs/promises';
+const {queries,window:w,from30,weekStart,monthStart}=analyticsQueries();
+const stamp=ms=>`toDateTime('${new Date(ms).toISOString().slice(0,19).replace('T',' ')}', 'UTC')`;
+const today="toStartOfDay(toTimeZone(now(), 'Asia/Singapore'))";
+const replace=[ [w.endExclusive,today],[w.startAt,`${today} - INTERVAL 1 DAY`],[w.weekStartAt,`${today} - INTERVAL 7 DAY`],[from30,`${today} - INTERVAL 30 DAY`],[weekStart,`toStartOfWeek(${today} - INTERVAL 1 DAY, 1) - INTERVAL 11 WEEK`],[monthStart,`toStartOfMonth(${today} - INTERVAL 1 DAY) - INTERVAL 11 MONTH`] ];
+const result=queries.filter(q=>q.id!=='hourly').map(q=>({...q,sql:replace.reduce((s,[ms,relative])=>s.replaceAll(stamp(ms),relative),q.sql)}));
+const funnel=result.find(q=>q.id==='funnel');
+funnel.sql += ', round(100.0 * (SELECT count() FROM selected) / nullIf((SELECT count() FROM views), 0), 2) AS selection_percent, round(100.0 * (SELECT count() FROM copied) / nullIf((SELECT count() FROM selected), 0), 2) AS copy_percent, round(100.0 * (SELECT count() FROM copied) / nullIf((SELECT count() FROM views), 0), 2) AS conversion_percent';
+await writeFile(new URL('./dashboard-queries.json',import.meta.url),JSON.stringify(result,null,2)+'\n');console.log(result.length+' rolling queries prepared');

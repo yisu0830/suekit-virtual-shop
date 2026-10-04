@@ -1,0 +1,82 @@
+[
+  {
+    "id": "yesterday",
+    "name": "昨日访客、浏览量与访问次数",
+    "sql": "SELECT count() AS pageviews, uniqExact(distinct_id) AS visitors, uniqExact(properties.$session_id) AS sessions FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 1 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview'"
+  },
+  {
+    "id": "week",
+    "name": "最近 7 日访客、浏览量与访问次数",
+    "sql": "SELECT count() AS pageviews, uniqExact(distinct_id) AS visitors, uniqExact(properties.$session_id) AS sessions FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 7 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview'"
+  },
+  {
+    "id": "month",
+    "name": "最近 30 日访客、浏览量与访问次数",
+    "sql": "SELECT count() AS pageviews, uniqExact(distinct_id) AS visitors, uniqExact(properties.$session_id) AS sessions FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview'"
+  },
+  {
+    "id": "daily",
+    "name": "按天趋势｜最近 30 日",
+    "sql": "SELECT formatDateTime(timestamp, '%Y-%m-%d', 'Asia/Singapore') AS period, uniqExact(distinct_id) AS visitors, count() AS pageviews, uniqExact(properties.$session_id) AS sessions FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview' GROUP BY 1 ORDER BY 1 LIMIT 30"
+  },
+  {
+    "id": "weekly",
+    "name": "按周趋势｜最近 12 周",
+    "sql": "SELECT formatDateTime(toStartOfWeek(toTimeZone(timestamp, 'Asia/Singapore'), 1), '%Y-%m-%d', 'Asia/Singapore') AS period, uniqExact(distinct_id) AS visitors, count() AS pageviews, uniqExact(properties.$session_id) AS sessions FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfWeek(toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 1 DAY, 1) - INTERVAL 11 WEEK AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview' GROUP BY 1 ORDER BY 1 LIMIT 12"
+  },
+  {
+    "id": "monthly",
+    "name": "按月趋势｜最近 12 月",
+    "sql": "SELECT formatDateTime(toStartOfMonth(toTimeZone(timestamp, 'Asia/Singapore')), '%Y-%m-%d', 'Asia/Singapore') AS period, uniqExact(distinct_id) AS visitors, count() AS pageviews, uniqExact(properties.$session_id) AS sessions FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfMonth(toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 1 DAY) - INTERVAL 11 MONTH AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview' GROUP BY 1 ORDER BY 1 LIMIT 12"
+  },
+  {
+    "id": "sources",
+    "name": "访问来源｜最近 30 日",
+    "sql": "SELECT source AS name, count() AS sessions FROM (SELECT properties.$session_id AS sid, coalesce(nullIf(toString(argMin(properties.$referring_domain, timestamp)), ''), '直接访问') AS source FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview' AND properties.$session_id IS NOT NULL AND properties.$session_id != '' GROUP BY sid) GROUP BY source ORDER BY 2 DESC, 1 LIMIT 10"
+  },
+  {
+    "id": "devices",
+    "name": "设备｜最近 30 日",
+    "sql": "SELECT coalesce(nullIf(toString(properties.$device_type), ''), '未知') AS name, uniqExact(distinct_id) AS visitors FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 10"
+  },
+  {
+    "id": "browsers",
+    "name": "浏览器｜最近 30 日",
+    "sql": "SELECT coalesce(nullIf(toString(properties.$browser), ''), '未知') AS name, uniqExact(distinct_id) AS visitors FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 10"
+  },
+  {
+    "id": "countries",
+    "name": "地区｜最近 30 日",
+    "sql": "SELECT coalesce(nullIf(toString(properties.$geoip_country_name), ''), '未知') AS name, uniqExact(distinct_id) AS visitors FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = '$pageview' GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 10"
+  },
+  {
+    "id": "components",
+    "name": "组件使用｜最近 30 日",
+    "sql": "SELECT toString(properties.component) AS component, count() AS selections, uniqExact(distinct_id) AS visitors FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = 'component_select' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 10"
+  },
+  {
+    "id": "variants",
+    "name": "样式使用｜最近 30 日",
+    "sql": "SELECT toString(properties.component) AS component, toString(properties.variant) AS variant, count() AS changes FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = 'variant_select' GROUP BY 1,2 ORDER BY 3 DESC,1,2 LIMIT 10"
+  },
+  {
+    "id": "formats",
+    "name": "输出格式｜最近 30 日",
+    "sql": "SELECT toString(properties.format) AS format, count() AS changes FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event = 'format_select' GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 10"
+  },
+  {
+    "id": "actions",
+    "name": "操作与复制｜最近 30 日",
+    "sql": "SELECT event AS operation, count() AS times FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND event IN ('selection_start','variant_select','component_select','scene_select','format_select','selection_cancel','copy_success','copy_click','copy_failure') GROUP BY 1 ORDER BY 2 DESC,1 LIMIT 9"
+  },
+  {
+    "id": "funnel",
+    "name": "转化漏斗｜访问 → 选择组件 → 复制成功",
+    "sql": "WITH base AS (SELECT timestamp, event, properties.$session_id AS sid FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND properties.$session_id IS NOT NULL AND properties.$session_id != ''), views AS (SELECT sid, min(timestamp) AS viewed FROM base WHERE event = '$pageview' GROUP BY sid), selected AS (SELECT b.sid AS sid, min(b.timestamp) AS selected_at FROM base b JOIN views v ON b.sid = v.sid WHERE b.event = 'component_select' AND b.timestamp >= v.viewed GROUP BY b.sid), copied AS (SELECT b.sid AS sid, min(b.timestamp) AS copied_at FROM base b JOIN selected s ON b.sid = s.sid WHERE b.event = 'copy_success' AND b.timestamp >= s.selected_at GROUP BY b.sid) SELECT (SELECT count() FROM views) AS visits, (SELECT count() FROM selected) AS selected, (SELECT count() FROM copied) AS copied, round(100.0 * (SELECT count() FROM selected) / nullIf((SELECT count() FROM views), 0), 2) AS selection_percent, round(100.0 * (SELECT count() FROM copied) / nullIf((SELECT count() FROM selected), 0), 2) AS copy_percent, round(100.0 * (SELECT count() FROM copied) / nullIf((SELECT count() FROM views), 0), 2) AS conversion_percent"
+  },
+  {
+    "id": "paths",
+    "name": "操作路径｜最近 30 日前 8 步",
+    "sql": "SELECT path, count() AS sessions FROM (SELECT arrayStringConcat(arraySlice(arrayCompact(arrayMap(x -> x.2, arraySort(x -> x.1, groupArray((timestamp, event))))),1,8), ' → ') AS path FROM events WHERE properties.app = 'suekit' AND properties.$host = 'suekit.jiongxiaosu0830.workers.dev' AND timestamp >= toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) - INTERVAL 30 DAY AND timestamp < toStartOfDay(toTimeZone(now(), 'Asia/Singapore')) AND properties.$session_id IS NOT NULL AND properties.$session_id != '' AND event IN ('$pageview','selection_start','variant_select','component_select','scene_select','format_select','selection_cancel','copy_success','copy_click','copy_failure') GROUP BY properties.$session_id) GROUP BY path ORDER BY 2 DESC,1 LIMIT 8"
+  }
+]
