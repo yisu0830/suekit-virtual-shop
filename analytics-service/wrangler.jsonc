@@ -1,0 +1,10 @@
+{
+  "name": "suekit-analytics",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-04",
+  "workers_dev": true,
+  "triggers": { "crons": ["0 17 * * *"] },
+  "kv_namespaces": [
+    { "binding": "ANALYTICS_CACHE", "id": "86160efd07cf45a9b5ba53467df7574d" }
+  ]
+}
