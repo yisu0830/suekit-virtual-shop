@@ -256,11 +256,17 @@ function applyState(){
   for(const b of modeButtons)b.setAttribute('aria-pressed',String(b.dataset.modeChoice===state.mode));
   for(const b of seasonButtons)b.setAttribute('aria-pressed',String(b.dataset.seasonChoice===state.season));
   const daylight={spring:'#ffe9c3',summer:'#fff3d4',autumn:'#ffd4a3',winter:'#dfebf5'};
-  skyLight.color.set(night?'#d6b995':daylight[state.season]);
-  skyLight.groundColor.set(night?'#49392f':'#999588');skyLight.intensity=night?.78:2.05;
-  moon.color.set(night?'#ffe0b2':daylight[state.season]);moon.intensity=night?1.25:2.45;
+  const nightPalette={
+    spring:{sky:'#d8bba8',ground:'#493933',key:'#ffe1c7',fog:'#302826'},
+    summer:{sky:'#d5c7a9',ground:'#444036',key:'#fff0d3',fog:'#2d2c26'},
+    autumn:{sky:'#d7b18d',ground:'#4b382c',key:'#ffd3a0',fog:'#33281f'},
+    winter:{sky:'#d0c6b8',ground:'#403b37',key:'#eee3d4',fog:'#2c2a28'},
+  }[state.season];
+  skyLight.color.set(night?nightPalette.sky:daylight[state.season]);
+  skyLight.groundColor.set(night?nightPalette.ground:'#999588');skyLight.intensity=night?.78:2.05;
+  moon.color.set(night?nightPalette.key:daylight[state.season]);moon.intensity=night?1.25:2.45;
   moon.position.set(night?-5:-7,night?12:13,night?6:9);
-  scene.fog.color.set(night?'#302923':state.season==='winter'?'#e4ebef':'#eee7db');
+  scene.fog.color.set(night?nightPalette.fog:state.season==='winter'?'#e4ebef':'#eee7db');
   scene.fog.density=night?.012:.007;
   renderer.toneMappingExposure=night?1.10:.99;
   ink.color.set(night?'#302822':'#574940');ink.opacity=night?.68:.48;
