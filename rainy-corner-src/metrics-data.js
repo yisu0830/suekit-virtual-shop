@@ -1,17 +1,13 @@
-import { customerTraffic } from './visitors.js';
-
-// Values read from the authenticated Cloudflare dashboard on 2026-10-02.
-// Missing series remain null until the source supplies actual observations.
-export const shopMetrics = Object.freeze({
-  sourceMode: 'snapshot',
-  observedAt: '2026-10-02',
-  windowLabel: '近 24 小时',
-  assetRequests: customerTraffic.assetRequests,
-  cacheHitRate: 91.48,
-  statusCounts: { '2xx': 305, '3xx': 139, '4xx': 14, '5xx': 0 },
-  hourly: null,
-  daily: null,
-  weeklyTotal: null,
-  tools: null,
-  sourceUrl: 'https://dash.cloudflare.com/b7429ba2b689e9642ded771fd7728a55/workers/services/view/suekit/production/metrics',
-});
+import snapshot from '../analytics.json';
+export const websiteId = '50b7f572-2676-4362-b56e-6ddbea82141c';
+export const shopMetrics = Object.freeze(snapshot);
+export async function loadShopMetrics() {
+  if (location.protocol === 'file:') return shopMetrics;
+  const response = await fetch(new URL('./analytics.json', location.href), {
+    cache: 'no-store', signal: AbortSignal.timeout(10000),
+  });
+  if (!response.ok) throw new Error('统计数据暂时无法读取');
+  const data = await response.json();
+  if (data.websiteId !== websiteId || data.schemaVersion !== 1) throw new Error('统计来源不匹配');
+  return data;
+}
