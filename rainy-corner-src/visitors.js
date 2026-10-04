@@ -1,18 +1,8 @@
 import { createPerson } from './person.js';
 
-// The last confirmed dashboard value, not a live feed or unique visitor count.
-export const customerTraffic = Object.freeze({
-  assetRequests: 458,
-  requestsPerCustomer: 100,
-  maxCustomers: 8,
-  source: 'snapshot',
-});
-
-export function customerCountFor(requests, perCustomer = 100, maximum = 8) {
-  if (!Number.isFinite(requests) || requests < 0) return 0;
-  if (!Number.isFinite(perCustomer) || perCustomer <= 0) return 0;
-  if (!Number.isFinite(maximum) || maximum < 0) return 0;
-  return Math.min(Math.floor(maximum), Math.round(requests / perCustomer));
+// Each unique visitor in the dashboard corresponds to one miniature customer.
+export function customerCountFor(visitors) {
+  return Number.isSafeInteger(visitors) && visitors >= 0 ? visitors : 0;
 }
 
 // Independent clear activity areas replace the shared circuit and its queue.
@@ -25,6 +15,7 @@ const areas = [
   { x: [-5.23, -3.96], z: [3.24, 4.75], y: .285, start: [-4.61, 3.90] },
   { x: [4.99, 5.22], z: [-3.68, .71], y: .285, start: [5.12, -2.72] },
   { x: [-3.18, -.46], z: [5.30, 5.57], y: .285, start: [-2.45, 5.42] },
+  { x: [-5.23, -4.10], z: [-2.80, .75], y: .285, start: [-4.65, -.80] },
 ];
 
 // The approach crosses the curb between the two window-side wanderers.
@@ -34,7 +25,7 @@ const entryPath = [[-.105, .383, 1.96], [-.105, .383, 1.56],
   [-.105, .552, 1.35], [-.105, .552, 1.04], [-.105, .651, .83],
   [-.105, .584, .64], [-.105, .584, .26], [-.105, .584, -.70]];
 
-export function buildVisitors(ctx, traffic = customerTraffic) {
+export function buildVisitors(ctx, traffic = {}) {
   const { THREE, scene } = ctx;
   let seed = Math.floor(Math.random() * 4294967296) >>> 0;
   const random = () => {
@@ -42,7 +33,7 @@ export function buildVisitors(ctx, traffic = customerTraffic) {
     return seed / 4294967296;
   };
   const group = new THREE.Group(); group.name = 'miniature customers'; scene.add(group);
-  const count = customerCountFor(traffic.assetRequests, traffic.requestsPerCustomer, traffic.maxCustomers);
+  const count = customerCountFor(traffic.visitors);
   const people = [];
   let shopGuest = null, opening = 0;
 
@@ -89,9 +80,13 @@ export function buildVisitors(ctx, traffic = customerTraffic) {
   }
 
   for (let index = 0; index < count; index++) {
-    const model = createPerson(THREE, index), area = areas[index];
+    const model = createPerson(THREE, index), area = areas[index % areas.length];
     group.add(model.group); model.group.name = `miniature-customer-${index + 1}`;
-    model.group.position.set(area.start[0], area.y, area.start[1]);
+    if (index < areas.length) model.group.position.set(area.start[0], area.y, area.start[1]);
+    else model.group.position.set(
+      area.x[0] + (area.x[1] - area.x[0]) * random(), area.y,
+      area.z[0] + (area.z[1] - area.z[0]) * random(),
+    );
     model.group.rotation.y = index % 2 ? -Math.PI / 2 : Math.PI / 2;
     const person = { ...model, index, area, state: 'walking', speed: .235 + random() * .095,
       velocity: 0, stride: 0, stepTime: random() * 8, wait: index * .45,
