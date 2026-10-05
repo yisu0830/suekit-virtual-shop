@@ -162,7 +162,7 @@ function statTable(rows, headings) {
 function ranksSection(title, rows, unit='人', kicker='近 30 日 · 前 10') {
   const box=section(title,kicker);
   const list=toolRanking((rows||[]).map(row=>({name:row.name,clicks:row.count})),unit);
-  box.append(list||emptyState('暂无记录','数据从 2026/10/04 开始积累。','tools'));
+  box.append(list||emptyState('暂无记录','暂无已完成日报中的操作记录。','tools'));
   return box;
 }
 function percent(value){return finite(value)?`${(100*value).toFixed(1)}%`:'—';}
@@ -183,7 +183,7 @@ export function mountMetricsPanel(root, initialData = {}) {
     const stale=data.stale||data.loadError||(cached&&Date.now()>Date.parse(data.nextUpdateAt)+7200000);
     const meta=el('div','metrics-source-meta');meta.append(el('span','metrics-data-badge',`${data.provider||'PostHog'} · ${stale?'上次数据':'每日更新'}`));
     header.append(el('p','metrics-subtitle',`统计截至 ${data.reportDate||'昨日'} · 每日 01:00 更新`));
-    header.append(el('p','metrics-method','2026/10/04 开始采集 · UTC+8'));
+    header.append(el('p','metrics-method',`${(data.collectionStartedAt||'2026-10-04').replaceAll('-','/')} 开始采集 · UTC+8`));
     if(stale)header.append(el('p','metrics-subtitle','更新暂不可用，保留上次数据。'));
     root.append(header,choices(views,view,key=>{view=key;render();},'分析视图'));
     if(view==='traffic'){
