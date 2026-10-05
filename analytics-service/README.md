@@ -2,6 +2,16 @@
 
 The dedicated Cloudflare Worker queries project 645031 for aggregate data from suekit.jiongxiaosu0830.workers.dev, then stores one complete snapshot in Workers KV. The virtual shop reads that snapshot independently of GitHub Pages. Daily refreshes do not commit files or redeploy the website.
 
+## Files
+
+| File | Purpose |
+| --- | --- |
+| `worker.mjs` | Daily collection, validation, KV caching and public reads |
+| `wrangler.jsonc` | Worker, KV and schedule configuration |
+| `worker.test.mjs` | Aggregate consistency and endpoint tests |
+| `dashboard-queries.mjs` | Generate rolling dashboard query definitions |
+| `dashboard-queries.json` | Generated dashboard query definitions |
+
 ## Configuration
 
 - Encrypted secret: `POSTHOG_READ_KEY`, restricted to the project and query read access. Never include it in frontend files, repository files, or logs.
@@ -15,7 +25,7 @@ The main website disables automatic interaction capture, session replay, and per
 
 ## Verification
 
-Run `node --test analytics-service/worker.test.mjs`. Live PostHog queries were verified successfully on 2026-10-04; pre-installation counts were zero. Deployed endpoint: https://suekit-analytics.jiongxiaosu0830.workers.dev/analytics.json. KV binding, encrypted secret, saved cron, HTTP 200 cache reads, and frontend cutover were verified on 2026-10-04. Production pageview, selection_start, and selection_cancel appeared in PostHog Activity. The first automatic daily invocation is scheduled for 2026-10-05 01:00 UTC+8; its execution has not yet occurred.
+Run `node --test analytics-service/worker.test.mjs`. Live PostHog queries were verified successfully on 2026-10-04; pre-installation counts were zero. Deployed endpoint: https://suekit-analytics.jiongxiaosu0830.workers.dev/analytics.json. KV binding, encrypted secret, saved cron, HTTP 200 cache reads, and frontend cutover were verified on 2026-10-04. Production pageview, selection_start, and selection_cancel appeared in PostHog Activity.
 
 ## Full dashboard
 
