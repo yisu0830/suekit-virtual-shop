@@ -40,14 +40,12 @@ npm run build
 
 ## 统计与隐私
 
-当前统计来源为 PostHog，由独立服务每日 UTC+8 01:00 更新，详情见 [统计服务说明](analytics-service/README.md)。页面内的 `analytics.json` 是备用快照，不会随每日服务更新自动改写。
+当前统计来源为 Google Analytics 4，由独立后台每日 UTC+8 01:00 更新，详情见 [统计服务说明](analytics-service/README.md)。小店展示的数据只来自 SueKit 主站的独立 GA4 属性 `557412742`，不包含小店访问。
 
-网站统计接口公开提供汇总指标，包括流量、来源设备、组件复制、转化及汇总访问路径。源码公开和禁止商用声明都不会限制这些指标的读取。
-
-后台读取密钥由服务端环境变量 `POSTHOG_READ_KEY` 提供，不应写入源码、前端页面或提交记录。本仓库忽略依赖目录、本地环境文件和部署缓存。
+`analytics.json` 是备用快照，不会随每日服务更新自动改写。公开接口只提供汇总指标。后台凭证保存在 Cloudflare 加密 Secret `GA4_SERVICE_ACCOUNT` 中，不应写入源码、前端页面或提交记录。漏斗与路径分析请在 GA4 探索中查看。
 
 ### 小店网站自身的访问统计
 
-小店接入同一个 PostHog 项目（645031），每次打开生产页面记录一次 `$pageview`，事件标记为 `app = suekit-virtual-shop`。在 PostHog Web Analytics 按此属性或 URL 路径 `/suekit-virtual-shop/` 筛选，可查看小店的浏览量、访客、会话与来源。SueKit 主站继续使用 `app = suekit`，页面内展示的主站统计不受影响。
+小店使用独立 GA4 属性 `557381679`，记录编号 `G-7219NQ9VN9`；SueKit 主站使用属性 `557412742` 和编号 `G-X1S2VP207S`。两个网站的数据独立保存。
 
-统计脚本由 `rainy-corner-src/analytics-snippet.html` 在构建时嵌入页面，仅在 GitHub Pages 的小店路径运行，本地预览不记录。关闭自动点击采集、会话录像和人物档案，URL 与来源 URL 去除查询参数和片段。访问数据从接入上线后开始累积，无法补回此前的访问。
+小店统计脚本由 `rainy-corner-src/analytics-snippet.html` 在构建时嵌入页面，仅在 GitHub Pages 的小店路径运行，本地预览不记录。URL 和来源 URL 去除查询参数和片段。GA4 数据从 2026-10-05 接入后开始累积；原 PostHog 历史仍保留在原平台。

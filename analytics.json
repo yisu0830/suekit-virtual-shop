@@ -1,1 +1,596 @@
-{"schemaVersion":1,"websiteId":"50b7f572-2676-4362-b56e-6ddbea82141c","provider":"PostHog","projectId":"645031","sourceMode":"daily-cache","timezone":"Asia/Singapore","observedAt":"2026-10-04T12:55:14.377Z","nextUpdateAt":"2026-10-04T17:00:00.000Z","reportDate":"2026-10-03","collectionStartedAt":"2026-10-04","dashboardUrl":"https://us.posthog.com/project/645031/dashboard/2168674","windowLabel":"昨日","hourlyTitle":"昨日浏览趋势","weeklyLabel":"最近 7 个完整日","pageviews":0,"visitors":0,"sessions":0,"hourly":[{"label":"10/03 00:00","pageviews":0},{"label":"10/03 01:00","pageviews":0},{"label":"10/03 02:00","pageviews":0},{"label":"10/03 03:00","pageviews":0},{"label":"10/03 04:00","pageviews":0},{"label":"10/03 05:00","pageviews":0},{"label":"10/03 06:00","pageviews":0},{"label":"10/03 07:00","pageviews":0},{"label":"10/03 08:00","pageviews":0},{"label":"10/03 09:00","pageviews":0},{"label":"10/03 10:00","pageviews":0},{"label":"10/03 11:00","pageviews":0},{"label":"10/03 12:00","pageviews":0},{"label":"10/03 13:00","pageviews":0},{"label":"10/03 14:00","pageviews":0},{"label":"10/03 15:00","pageviews":0},{"label":"10/03 16:00","pageviews":0},{"label":"10/03 17:00","pageviews":0},{"label":"10/03 18:00","pageviews":0},{"label":"10/03 19:00","pageviews":0},{"label":"10/03 20:00","pageviews":0},{"label":"10/03 21:00","pageviews":0},{"label":"10/03 22:00","pageviews":0},{"label":"10/03 23:00","pageviews":0}],"daily":[{"label":"09/27","date":"2026-09-27","visitors":0,"pageviews":0,"sessions":0},{"label":"09/28","date":"2026-09-28","visitors":0,"pageviews":0,"sessions":0},{"label":"09/29","date":"2026-09-29","visitors":0,"pageviews":0,"sessions":0},{"label":"09/30","date":"2026-09-30","visitors":0,"pageviews":0,"sessions":0},{"label":"10/01","date":"2026-10-01","visitors":0,"pageviews":0,"sessions":0},{"label":"10/02","date":"2026-10-02","visitors":0,"pageviews":0,"sessions":0},{"label":"10/03","date":"2026-10-03","visitors":0,"pageviews":0,"sessions":0}],"weeklyTotal":0,"weeklyVisitors":0,"periods":{"yesterday":{"pageviews":0,"visitors":0,"sessions":0},"week":{"pageviews":0,"visitors":0,"sessions":0},"month":{"pageviews":0,"visitors":0,"sessions":0}},"trends":{"daily":[{"label":"09/04","date":"2026-09-04","visitors":0,"pageviews":0,"sessions":0},{"label":"09/05","date":"2026-09-05","visitors":0,"pageviews":0,"sessions":0},{"label":"09/06","date":"2026-09-06","visitors":0,"pageviews":0,"sessions":0},{"label":"09/07","date":"2026-09-07","visitors":0,"pageviews":0,"sessions":0},{"label":"09/08","date":"2026-09-08","visitors":0,"pageviews":0,"sessions":0},{"label":"09/09","date":"2026-09-09","visitors":0,"pageviews":0,"sessions":0},{"label":"09/10","date":"2026-09-10","visitors":0,"pageviews":0,"sessions":0},{"label":"09/11","date":"2026-09-11","visitors":0,"pageviews":0,"sessions":0},{"label":"09/12","date":"2026-09-12","visitors":0,"pageviews":0,"sessions":0},{"label":"09/13","date":"2026-09-13","visitors":0,"pageviews":0,"sessions":0},{"label":"09/14","date":"2026-09-14","visitors":0,"pageviews":0,"sessions":0},{"label":"09/15","date":"2026-09-15","visitors":0,"pageviews":0,"sessions":0},{"label":"09/16","date":"2026-09-16","visitors":0,"pageviews":0,"sessions":0},{"label":"09/17","date":"2026-09-17","visitors":0,"pageviews":0,"sessions":0},{"label":"09/18","date":"2026-09-18","visitors":0,"pageviews":0,"sessions":0},{"label":"09/19","date":"2026-09-19","visitors":0,"pageviews":0,"sessions":0},{"label":"09/20","date":"2026-09-20","visitors":0,"pageviews":0,"sessions":0},{"label":"09/21","date":"2026-09-21","visitors":0,"pageviews":0,"sessions":0},{"label":"09/22","date":"2026-09-22","visitors":0,"pageviews":0,"sessions":0},{"label":"09/23","date":"2026-09-23","visitors":0,"pageviews":0,"sessions":0},{"label":"09/24","date":"2026-09-24","visitors":0,"pageviews":0,"sessions":0},{"label":"09/25","date":"2026-09-25","visitors":0,"pageviews":0,"sessions":0},{"label":"09/26","date":"2026-09-26","visitors":0,"pageviews":0,"sessions":0},{"label":"09/27","date":"2026-09-27","visitors":0,"pageviews":0,"sessions":0},{"label":"09/28","date":"2026-09-28","visitors":0,"pageviews":0,"sessions":0},{"label":"09/29","date":"2026-09-29","visitors":0,"pageviews":0,"sessions":0},{"label":"09/30","date":"2026-09-30","visitors":0,"pageviews":0,"sessions":0},{"label":"10/01","date":"2026-10-01","visitors":0,"pageviews":0,"sessions":0},{"label":"10/02","date":"2026-10-02","visitors":0,"pageviews":0,"sessions":0},{"label":"10/03","date":"2026-10-03","visitors":0,"pageviews":0,"sessions":0}],"weekly":[{"label":"07/13","date":"2026-07-13","visitors":0,"pageviews":0,"sessions":0},{"label":"07/20","date":"2026-07-20","visitors":0,"pageviews":0,"sessions":0},{"label":"07/27","date":"2026-07-27","visitors":0,"pageviews":0,"sessions":0},{"label":"08/03","date":"2026-08-03","visitors":0,"pageviews":0,"sessions":0},{"label":"08/10","date":"2026-08-10","visitors":0,"pageviews":0,"sessions":0},{"label":"08/17","date":"2026-08-17","visitors":0,"pageviews":0,"sessions":0},{"label":"08/24","date":"2026-08-24","visitors":0,"pageviews":0,"sessions":0},{"label":"08/31","date":"2026-08-31","visitors":0,"pageviews":0,"sessions":0},{"label":"09/07","date":"2026-09-07","visitors":0,"pageviews":0,"sessions":0},{"label":"09/14","date":"2026-09-14","visitors":0,"pageviews":0,"sessions":0},{"label":"09/21","date":"2026-09-21","visitors":0,"pageviews":0,"sessions":0},{"label":"09/28","date":"2026-09-28","visitors":0,"pageviews":0,"sessions":0}],"monthly":[{"label":"2025-11","date":"2025-11-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2025-12","date":"2025-12-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-01","date":"2026-01-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-02","date":"2026-02-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-03","date":"2026-03-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-04","date":"2026-04-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-05","date":"2026-05-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-06","date":"2026-06-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-07","date":"2026-07-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-08","date":"2026-08-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-09","date":"2026-09-01","visitors":0,"pageviews":0,"sessions":0},{"label":"2026-10","date":"2026-10-01","visitors":0,"pageviews":0,"sessions":0}]},"sources":[],"devices":[],"browsers":[],"countries":[],"components":[],"variants":[],"formats":[],"actions":[],"copy":{"copy_click":0,"copy_success":0,"copy_failure":0},"funnel":{"visits":0,"selected":0,"copied":0,"selectionRate":null,"conversionRate":null,"copyRate":null},"paths":[],"tools":[],"pages":[],"rankingTitle":"热门操作","stale":false}
+{
+  "schemaVersion": 1,
+  "websiteId": "50b7f572-2676-4362-b56e-6ddbea82141c",
+  "provider": "Google Analytics 4",
+  "projectId": "557412742",
+  "sourceMode": "daily-cache",
+  "timezone": "Asia/Singapore",
+  "observedAt": "2026-10-05T12:43:17.823Z",
+  "nextUpdateAt": "2026-10-05T17:00:00.000Z",
+  "reportDate": "2026-10-04",
+  "collectionStartedAt": "2026-10-05",
+  "dashboardUrl": "https://analytics.google.com/analytics/web/#/a150222986p557412742/reports/intelligenthome",
+  "windowLabel": "昨日",
+  "hourlyTitle": "昨日浏览趋势",
+  "weeklyLabel": "最近 7 个完整日",
+  "pageviews": 0,
+  "visitors": 0,
+  "sessions": 0,
+  "hourly": [
+    {
+      "label": "10/04 00:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 01:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 02:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 03:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 04:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 05:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 06:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 07:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 08:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 09:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 10:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 11:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 12:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 13:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 14:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 15:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 16:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 17:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 18:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 19:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 20:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 21:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 22:00",
+      "pageviews": 0
+    },
+    {
+      "label": "10/04 23:00",
+      "pageviews": 0
+    }
+  ],
+  "daily": [
+    {
+      "date": "2026-09-28",
+      "label": "09/28",
+      "visitors": 0,
+      "pageviews": 0,
+      "sessions": 0
+    },
+    {
+      "date": "2026-09-29",
+      "label": "09/29",
+      "visitors": 0,
+      "pageviews": 0,
+      "sessions": 0
+    },
+    {
+      "date": "2026-09-30",
+      "label": "09/30",
+      "visitors": 0,
+      "pageviews": 0,
+      "sessions": 0
+    },
+    {
+      "date": "2026-10-01",
+      "label": "10/01",
+      "visitors": 0,
+      "pageviews": 0,
+      "sessions": 0
+    },
+    {
+      "date": "2026-10-02",
+      "label": "10/02",
+      "visitors": 0,
+      "pageviews": 0,
+      "sessions": 0
+    },
+    {
+      "date": "2026-10-03",
+      "label": "10/03",
+      "visitors": 0,
+      "pageviews": 0,
+      "sessions": 0
+    },
+    {
+      "date": "2026-10-04",
+      "label": "10/04",
+      "visitors": 0,
+      "pageviews": 0,
+      "sessions": 0
+    }
+  ],
+  "weeklyTotal": 0,
+  "weeklyVisitors": 0,
+  "periods": {
+    "yesterday": {
+      "pageviews": 0,
+      "visitors": 0,
+      "sessions": 0
+    },
+    "week": {
+      "pageviews": 0,
+      "visitors": 0,
+      "sessions": 0
+    },
+    "month": {
+      "pageviews": 0,
+      "visitors": 0,
+      "sessions": 0
+    }
+  },
+  "trends": {
+    "daily": [
+      {
+        "date": "2026-09-05",
+        "label": "09/05",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-06",
+        "label": "09/06",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-07",
+        "label": "09/07",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-08",
+        "label": "09/08",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-09",
+        "label": "09/09",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-10",
+        "label": "09/10",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-11",
+        "label": "09/11",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-12",
+        "label": "09/12",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-13",
+        "label": "09/13",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-14",
+        "label": "09/14",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-15",
+        "label": "09/15",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-16",
+        "label": "09/16",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-17",
+        "label": "09/17",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-18",
+        "label": "09/18",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-19",
+        "label": "09/19",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-20",
+        "label": "09/20",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-21",
+        "label": "09/21",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-22",
+        "label": "09/22",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-23",
+        "label": "09/23",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-24",
+        "label": "09/24",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-25",
+        "label": "09/25",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-26",
+        "label": "09/26",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-27",
+        "label": "09/27",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-28",
+        "label": "09/28",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-29",
+        "label": "09/29",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-30",
+        "label": "09/30",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-10-01",
+        "label": "10/01",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-10-02",
+        "label": "10/02",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-10-03",
+        "label": "10/03",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-10-04",
+        "label": "10/04",
+        "visitors": 0,
+        "pageviews": 0,
+        "sessions": 0
+      }
+    ],
+    "weekly": [
+      {
+        "date": "2026-07-13",
+        "label": "07/13",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-07-20",
+        "label": "07/20",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-07-27",
+        "label": "07/27",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-08-03",
+        "label": "08/03",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-08-10",
+        "label": "08/10",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-08-17",
+        "label": "08/17",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-08-24",
+        "label": "08/24",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-08-31",
+        "label": "08/31",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-07",
+        "label": "09/07",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-14",
+        "label": "09/14",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-21",
+        "label": "09/21",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-28",
+        "label": "09/28",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      }
+    ],
+    "monthly": [
+      {
+        "date": "2025-11-01",
+        "label": "2025-11",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2025-12-01",
+        "label": "2025-12",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-01-01",
+        "label": "2026-01",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-02-01",
+        "label": "2026-02",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-03-01",
+        "label": "2026-03",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-04-01",
+        "label": "2026-04",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-05-01",
+        "label": "2026-05",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-06-01",
+        "label": "2026-06",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-07-01",
+        "label": "2026-07",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-08-01",
+        "label": "2026-08",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-09-01",
+        "label": "2026-09",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      },
+      {
+        "date": "2026-10-01",
+        "label": "2026-10",
+        "pageviews": 0,
+        "visitors": 0,
+        "sessions": 0
+      }
+    ]
+  },
+  "sources": [],
+  "devices": [],
+  "browsers": [],
+  "countries": [],
+  "components": [],
+  "variants": [],
+  "formats": [],
+  "actions": [],
+  "copy": {
+    "copy_click": 0,
+    "copy_success": 0,
+    "copy_failure": 0
+  },
+  "funnel": null,
+  "paths": [],
+  "capabilities": {
+    "usage": true,
+    "funnel": false,
+    "paths": false
+  },
+  "tools": [],
+  "pages": [],
+  "rankingTitle": "热门操作"
+}
