@@ -18,7 +18,7 @@ html[data-mode="night"] .switch-group button[aria-pressed="true"]{background:var
 .scene-heading p{margin:0 0 8px;font-size:10px;font-weight:600;letter-spacing:.2em;color:var(--ui-faint)}
 .scene-heading h1{margin:0;font-size:21px;font-weight:500;letter-spacing:.04em}
 .scene-heading .scene-description{margin:10px 0 0;font-size:11px;font-weight:400;letter-spacing:.04em;color:var(--ui-muted)}
-.suekit-entry{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 0;color:var(--ui-accent);font-size:12px;font-weight:600;letter-spacing:.04em;text-decoration:none;transition:opacity .2s}
+.suekit-entry{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border:1px solid var(--ui-line);border-radius:999px;background:color-mix(in srgb,var(--ui-card2) 72%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 4px 18px #5b534914;color:var(--ui-accent);font-size:12px;font-weight:600;letter-spacing:.04em;text-decoration:none;transition:opacity .2s}
 .suekit-entry:hover{opacity:.75}
 .suekit-entry:focus-visible{outline:2px solid var(--ui-accent);outline-offset:3px}
 .model-stage #world{position:absolute;inset:0;width:100%;height:100%}

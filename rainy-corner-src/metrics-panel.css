@@ -112,7 +112,9 @@ html[data-mode="night"] .metrics-panel {
 .metric-path-step { border-radius: 6px; background: var(--mp-card); padding: 5px 8px; color: var(--mp-ink); }
 .metric-path-arrow { color: var(--mp-red); }
 
-.metrics-source-footer { margin-top: 22px; padding-top: 16px; }
-.metrics-source-footer .metrics-source-meta { margin-top: 0; }
+.metrics-source-footer { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 22px; padding-top: 16px; }
+.metrics-source-footer::before,.metrics-source-footer::after { content: ""; flex: 1; min-width: 0; height: 1px; background: var(--mp-line); }
+.metrics-source-footer .metrics-source-meta { flex: none; margin-top: 0; }
+.metrics-source-footer .metrics-data-badge { background: transparent; padding: 0; }
 
 .metrics-panel > .metric-section:has(+ .metrics-source-footer) { border-bottom: 0; }
