@@ -204,7 +204,7 @@ export function mountMetricsPanel(root, initialData = {}) {
       root.append(periods,trend);
     } else if(view==='audience'){
       root.append(ranksSection('访问来源',data.sources,'次访问'),ranksSection('设备',data.devices),ranksSection('浏览器',data.browsers),ranksSection('大致地区',data.countries));
-      root.append(el('p','metrics-method','来源按会话内首个浏览的来源域名统计；设备、浏览器和地区按独立访客统计，各组人数不一定可以相加。'));
+      root.append(el('p','metrics-method','来源按访问会话统计；设备、浏览器和地区按独立访客统计，各组人数不一定可以相加。'));
     } else if(view==='usage'){
       root.append(ranksSection('组件使用',data.components,'次选择'),ranksSection('样式使用',data.variants,'次切换'),ranksSection('输出格式',data.formats,'次切换'));
       const copy=section('复制操作','最近 30 个完整日');
@@ -218,13 +218,13 @@ export function mountMetricsPanel(root, initialData = {}) {
         [['访问网站',flow.visits],['选择组件',flow.selected],['复制成功',flow.copied]].forEach(([label,value],i)=>{const item=el('li');item.append(el('span','',`${i+1}. ${label}`),el('strong','',`${displayNumber(value,true)} 次访问`));const bar=el('div','metric-funnel-track');const fill=el('i');fill.style.width=`${flow.visits?100*value/flow.visits:0}%`;bar.append(fill);item.append(bar);list.append(item);});
         box.append(list,statTable([['访问 → 选择组件',percent(flow.selectionRate)],['选择组件 → 复制成功',percent(flow.copyRate)],['访问 → 复制成功',percent(flow.conversionRate)]],['转化阶段','转化率']));
         if(!flow.visits)box.append(el('p','metrics-method','当前没有访问记录，转化率暂无法计算。'));
-      }else box.append(emptyState('转化数据尚未更新','等待下一次每日同步。'));
-      box.append(el('p','metrics-method','按同一次访问中实际发生的顺序统计，每次访问在每一步最多计一次。复制成功表示浏览器报告复制操作成功。'));
+      }else box.append(emptyState(data.capabilities?.funnel===false?'转化详情请在 GA4 中查看':'转化数据尚未更新',data.capabilities?.funnel===false?'当前展示流量与实际操作次数，GA4 的漏斗分析可在统计后台查看。':'等待下一次每日同步。'));
+      if(flow)box.append(el('p','metrics-method','按同一次访问中实际发生的顺序统计，每次访问在每一步最多计一次。复制成功表示浏览器报告复制操作成功。'));
       root.append(box);
     } else {
       const box=section('常见操作路径','最近 30 日 · 前 8 条');
-      if(data.paths?.length){const list=el('ol','metric-paths');data.paths.forEach(path=>{const item=el('li');const steps=el('div','metric-path-steps');path.steps.forEach((step,i)=>{if(i)steps.append(el('span','metric-path-arrow','→'));steps.append(el('span','metric-path-step',step));});item.append(steps,el('p','metrics-method',`${displayNumber(path.count,true)} 次访问`));list.append(item);});box.append(list);}else box.append(emptyState('暂无操作路径','有访客访问或使用组件后，展示实际路径。'));
-      box.append(el('p','metrics-method','只包含已记录的操作，每次访问展示前 8 步；连续重复操作合并，忽略性能监测事件。'));
+      if(data.paths?.length){const list=el('ol','metric-paths');data.paths.forEach(path=>{const item=el('li');const steps=el('div','metric-path-steps');path.steps.forEach((step,i)=>{if(i)steps.append(el('span','metric-path-arrow','→'));steps.append(el('span','metric-path-step',step));});item.append(steps,el('p','metrics-method',`${displayNumber(path.count,true)} 次访问`));list.append(item);});box.append(list);}else box.append(emptyState(data.capabilities?.paths===false?'操作路径请在 GA4 中查看':'暂无操作路径',data.capabilities?.paths===false?'可在 SueKit 统计后台的「探索」中查看路径分析。':'有访客访问或使用组件后，展示实际路径。'));
+      if(data.capabilities?.paths!==false)box.append(el('p','metrics-method','只包含已记录的操作，每次访问展示前 8 步；连续重复操作合并，忽略性能监测事件。'));
       root.append(box);
     }
     const footer=el('footer','metrics-source-footer');footer.append(meta);root.append(footer);
