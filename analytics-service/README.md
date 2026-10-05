@@ -1,34 +1,28 @@
-# SueKit daily PostHog analytics
+# SueKit GA4 analytics backend
 
-The dedicated Cloudflare Worker queries project 645031 for aggregate data from suekit.jiongxiaosu0830.workers.dev, then stores one complete snapshot in Workers KV. The virtual shop reads that snapshot independently of GitHub Pages. Daily refreshes do not commit files or redeploy the website.
+SueKit and suekit-virtual-shop record visits in independent GA4 properties:
 
-## Files
+- SueKit: property `557412742`, measurement `G-X1S2VP207S`.
+- suekit-virtual-shop: property `557381679`, measurement `G-7219NQ9VN9`.
 
-| File | Purpose |
-| --- | --- |
-| `worker.mjs` | Daily collection, validation, KV caching and public reads |
-| `wrangler.jsonc` | Worker, KV and schedule configuration |
-| `worker.test.mjs` | Aggregate consistency and endpoint tests |
-| `dashboard-queries.mjs` | Generate rolling dashboard query definitions |
-| `dashboard-queries.json` | Generated dashboard query definitions |
+The shop display reads only SueKit aggregates from the existing Cloudflare endpoint. The backend fixes its reporting property to SueKit and filters its production hostname; shop visits never enter the displayed totals.
 
 ## Configuration
 
-- Encrypted secret: `POSTHOG_READ_KEY`, restricted to the project and query read access. Never include it in frontend files, repository files, or logs.
-- KV binding: `ANALYTICS_CACHE`, dedicated namespace; namespace ID is recorded in wrangler.jsonc.
-- Cron: `0 17 * * *` UTC, daily 01:00 Asia/Singapore (UTC+8).
-- Public path: `/analytics.json`; only aggregate counts and event names are exposed.
+Store the service-account JSON as the encrypted Cloudflare Secret `GA4_SERVICE_ACCOUNT`. Never commit it or include it in frontend files or logs. The service account has Viewer access only to the SueKit GA4 property, with cost and revenue metrics restricted. Enable the Google Analytics Data API in the Cloud project.
 
-Each snapshot covers yesterday, the last 7 and 30 complete days, 30 daily trend points, 12 calendar weeks, and 12 calendar months. It also includes sources, devices, browsers, countries, component and variant use, output formats, copy operations, an ordered session funnel, and the eight most common session paths. Visitor and session totals are queried independently for each period; daily unique counts are never added together. The funnel requires pageview → component selection → successful copy in the same session. Consecutive repeats are collapsed in paths, which include at most eight tracked steps. Empty denominators return unknown rates. Queries filter both the SueKit app property and the production hostname. Failed or inconsistent queries preserve the previous snapshot. The endpoint flags data as stale two hours after the expected next refresh. Public visits only read KV and cannot trigger PostHog queries.
+KV binding: `ANALYTICS_CACHE`. Cron: `0 17 * * *` UTC, daily 01:00 Asia/Singapore. The public `/analytics.json` endpoint reads the cached snapshot only; visits cannot trigger Google queries. Existing PostHog history is retained separately.
 
-The main website disables automatic interaction capture, session replay, and person profiles. It records pageviews and predefined component/format/scene/selection/copy actions; URL query parameters and fragments are removed.
+The main property has event-scoped custom dimensions `component`, `variant`, and `format`. Set `GA4_CUSTOM_DIMENSIONS=false` only if these dimensions are unavailable.
+
+## Reports
+
+Snapshots contain yesterday and the last 7/30 complete days, daily/weekly/monthly trends, sources, device/browser/country summaries, component/variant/format use and copy-operation counts. Unique users are queried separately for each period. Incomplete, sampled, thresholded or inconsistent responses preserve the previous snapshot.
+
+Sources count sessions; device/browser/country groups count users and cannot always be added together. Ordered session funnels and paths from the old PostHog implementation are unavailable through the standard GA4 report API; the shop directs users to GA4 Explore instead of displaying invented zero values.
+
+GA4 collection starts 2026-10-05. Prior PostHog events are not imported. Public endpoint: https://suekit-analytics.jiongxiaosu0830.workers.dev/analytics.json.
 
 ## Verification
 
-Run `node --test analytics-service/worker.test.mjs`. Live PostHog queries were verified successfully on 2026-10-04; pre-installation counts were zero. Deployed endpoint: https://suekit-analytics.jiongxiaosu0830.workers.dev/analytics.json. KV binding, encrypted secret, saved cron, HTTP 200 cache reads, and frontend cutover were verified on 2026-10-04. Production pageview, selection_start, and selection_cancel appeared in PostHog Activity.
-
-## Full dashboard
-
-https://us.posthog.com/project/645031/dashboard/2168674
-
-Dashboard queries use relative UTC+8 boundaries and end at yesterday. The deployed expanded scheduled handler was manually triggered successfully on 2026-10-04, and its complete KV snapshot was read back from the public endpoint. Normal automatic scheduling remains daily 01:00 UTC+8.
+`node --test analytics-service/ga4-worker.test.mjs` verifies property isolation, count semantics, preservation of cache on errors, endpoint behavior, read-only OAuth JWT signing, and Singapore day boundaries. A live service-account query succeeded on 2026-10-05.

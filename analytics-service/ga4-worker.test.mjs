@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {webcrypto} from 'node:crypto';
-import worker,{collect,refresh,accessToken,reportingWindow} from './worker.mjs';
+import worker,{collect,refresh,accessToken,reportingWindow} from './ga4-worker.mjs';
 const now=Date.parse('2026-10-06T01:00:00+08:00');
 const tokenProvider=async()=> 'mock-read-only-token';
 function mockReport(url,options){
