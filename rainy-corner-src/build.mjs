@@ -43,7 +43,5 @@ const html=`<!doctype html>
 </main>
 <script>${script}</script>
 </body></html>`;
-await writeFile(path.join(here,'../rainy-convenience-store.html'),html);
-await writeFile(path.join(here,'../suekit-four-seasons.html'),html);
 await writeFile(path.join(here,'../index.html'),html);
 console.log(`Built standalone HTML: ${(Buffer.byteLength(html)/1024).toFixed(0)} KB`);
