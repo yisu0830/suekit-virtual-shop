@@ -37,15 +37,3 @@ npm run build
 ```
 
 构建只生成根目录的 `index.html`，不再生成重复页面。
-
-## 统计与隐私
-
-当前统计来源为 Google Analytics 4，由独立后台每日 UTC+8 01:00 更新，详情见 [统计服务说明](analytics-service/README.md)。小店展示的数据只来自 SueKit 主站的独立 GA4 属性 `557412742`，不包含小店访问。
-
-`analytics.json` 是备用快照，不会随每日服务更新自动改写。公开接口只提供汇总指标。后台凭证保存在 Cloudflare 加密 Secret `GA4_SERVICE_ACCOUNT` 中，不应写入源码、前端页面或提交记录。漏斗与路径分析请在 GA4 探索中查看。
-
-### 小店网站自身的访问统计
-
-小店使用独立 GA4 属性 `557381679`，记录编号 `G-7219NQ9VN9`；SueKit 主站使用属性 `557412742` 和编号 `G-X1S2VP207S`。两个网站的数据独立保存。
-
-小店统计脚本由 `rainy-corner-src/analytics-snippet.html` 在构建时嵌入页面，仅在 GitHub Pages 的小店路径运行，本地预览不记录。URL 和来源 URL 去除查询参数和片段。GA4 数据从 2026-10-05 接入后开始累积；原 PostHog 历史仍保留在原平台。
